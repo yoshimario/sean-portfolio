@@ -181,11 +181,12 @@ export default function App() {
           <React.Suspense fallback={null}>
             <AuroraBackgroundR3F
               theme={dark ? "dark" : "light"}
-              intensity={2.5} // Much higher
-              speed={4.0} // Much faster
-              hueShift={0.3} // More color variation
-              contrast={2.0} // Higher contrast
-              saturation={2.5} // More saturated
+              intensity={1.35}
+              speed={1.1}
+              hueShift={0.3}
+              scaleY={2}
+              contrast={1.6}
+              saturation={1.7}
             />
           </React.Suspense>
 
