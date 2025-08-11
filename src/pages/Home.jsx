@@ -5,7 +5,7 @@ import { MapPin, ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import seanImg from "../assets/img/sean.jpg";
 
 /* --- tiny helpers / UI --- */
-const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
+const container = "mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"; // unified width
 
 function Button({
   asChild = false,
@@ -44,9 +44,7 @@ function Card({ className = "", children }) {
   return (
     <div
       className={[
-        "rounded-2xl border backdrop-blur-xl shadow-lg",
-        "border-neutral-200/60 bg-white/70 text-neutral-900",
-        "dark:border-white/15 dark:bg-white/10 dark:text-white",
+        "glass rounded-2xl shadow-lg border dark:bg-white/5 bg-neutral-100/70 dark:border-white/10 border-neutral-200",
         className,
       ].join(" ")}
     >
@@ -55,15 +53,16 @@ function Card({ className = "", children }) {
   );
 }
 
+/* Section: consistent vertical rhythm site-wide */
 function Section({ id, title, subtitle, children }) {
   return (
-    <section id={id} className="py-20">
-      <div className="mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white drop-shadow">
+    <section id={id} className="scroll-mt-[72px] pt-8 pb-8">
+      <div className="mb-3">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white drop-shadow">
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-2 text-neutral-600 dark:text-white/80 max-w-2xl">
+          <p className="mt-1 text-sm md:text-base text-neutral-600 dark:text-white/80 max-w-2xl">
             {subtitle}
           </p>
         )}
@@ -79,7 +78,7 @@ const PERSON = {
   tagline: "Cybersecurity • IT Operations • Problem Solver",
   blurb:
     "Cybersecurity & IT professional focused on network security, vulnerability assessment, and realistic troubleshooting.",
-  location: "Vamtaa, Finland",
+  location: "Vantaa, Finland",
   email: "seankipina@alumni.depaul.edu",
   github: "https://github.com/yoshimario",
   linkedin: "https://www.linkedin.com/in/seankipina/",
@@ -89,232 +88,195 @@ const PERSON = {
 export default function Home() {
   return (
     <>
-      {/* Hero */}
+      {/* HERO — offset for sticky header + tight bottom spacing */}
       <section
         id="hero"
-        className="relative overflow-hidden border-b border-white/10"
+        className="relative overflow-hidden border-b border-white/10 pt-[72px] pb-8"
       >
         <div
           className={[
             container,
-            "py-28 md:py-36 grid md:grid-cols-2 gap-10 items-center text-neutral-900 dark:text-white relative z-10",
+            "min-h-[20vh] flex flex-col justify-center items-start text-neutral-900 dark:text-white relative z-10",
           ].join(" ")}
         >
-          {/* Left: copy & CTAs */}
-          <div>
-            <div className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-white/80 mb-3">
-              <MapPin className="w-4 h-4" /> {PERSON.location}
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight drop-shadow">
-              {PERSON.name}
-            </h1>
-
-            <p className="mt-3 text-2xl text-indigo-700 dark:text-indigo-200">
-              {PERSON.tagline}
-            </p>
-
-            <p className="mt-4 text-neutral-700 dark:text-white/85 max-w-xl">
-              {PERSON.blurb}
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link to="/projects" className="flex items-center gap-2">
-                  See projects <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <a
-                  href={`mailto:${PERSON.email}`}
-                  className="flex items-center gap-2"
+          <div className="grid md:grid-cols-2 items-center w-full gap-6 md:gap-8">
+            {/* Left: copy & CTAs */}
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-white/80">
+                <MapPin className="w-4 h-4" /> {PERSON.location}
+              </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-neutral-900 dark:text-white drop-shadow">
+                {PERSON.name}
+              </h1>
+              <p className="text-xl md:text-2xl text-indigo-700 dark:text-indigo-200">
+                {PERSON.tagline}
+              </p>
+              <p className="text-neutral-700 dark:text-white/85 max-w-lg leading-relaxed">
+                {PERSON.blurb}
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Button asChild size="lg" className="btn-enhanced">
+                  <Link to="/projects" className="flex items-center gap-2">
+                    See projects <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="btn-enhanced"
                 >
-                  <Mail className="w-4 h-4" /> Contact
-                </a>
-              </Button>
-              <Button asChild variant="ghost">
-                <a
-                  href={PERSON.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  <Github className="w-4 h-4" /> GitHub
-                </a>
-              </Button>
-              <Button asChild variant="ghost">
-                <a
-                  href={PERSON.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  <Linkedin className="w-4 h-4" /> LinkedIn
-                </a>
-              </Button>
-            </div>
-          </div>
-
-          {/* Right: portrait */}
-          <div className="md:justify-self-end">
-            <Card className="glass relative size-56 md:size-72 overflow-hidden ring-1 ring-white/10">
-              <img
-                src={seanImg} // make sure this import exists: import seanImg from "../assets/img/sean.jpg";
-                alt="Sean Kipinä"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-
-              {/* Water shimmer overlay */}
-              <svg
-                className="absolute inset-0 h-full w-full mix-blend-soft-light opacity-70"
-                aria-hidden="true"
-              >
-                <filter id="introRippleHome">
-                  <feTurbulence
-                    type="fractalNoise"
-                    baseFrequency="0.006 0.012"
-                    numOctaves="2"
-                    seed="7"
+                  <a
+                    href={`mailto:${PERSON.email}`}
+                    className="flex items-center gap-2"
                   >
-                    <animate
-                      attributeName="baseFrequency"
-                      dur="10s"
-                      values="0.006 0.012;0.008 0.016;0.006 0.012"
-                      repeatCount="indefinite"
-                    />
-                  </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" scale="18" />
-                </filter>
-                <rect
-                  width="100%"
-                  height="100%"
-                  filter="url(#introRippleHome)"
-                  fill="url(#introGradHome)"
+                    <Mail className="w-4 h-4" /> Contact
+                  </a>
+                </Button>
+                <Button asChild variant="ghost">
+                  <a
+                    href={PERSON.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Github className="w-4 h-4" /> GitHub
+                  </a>
+                </Button>
+                <Button asChild variant="ghost">
+                  <a
+                    href={PERSON.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Linkedin className="w-4 h-4" /> LinkedIn
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: portrait */}
+            <div className="md:justify-self-center">
+              <div className="glass-strong glow-ring rounded-2xl relative size-48 md:size-64 overflow-hidden ring-1 dark:ring-white/10 ring-black/10 mx-auto">
+                <img
+                  src={seanImg}
+                  alt="Sean Kipinä"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-                <defs>
-                  <linearGradient
-                    id="introGradHome"
-                    x1="0"
-                    x2="1"
-                    y1="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#93c5fd" stopOpacity="0.25" />
-                    <stop
-                      offset="100%"
-                      stopColor="#a5f3fc"
-                      stopOpacity="0.15"
-                    />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/15 to-cyan-300/10" />
-              <span className="sr-only">Water-glass aesthetic portrait</span>
-            </Card>
+                {/* Water shimmer overlay */}
+                <svg
+                  className="absolute inset-0 h-full w-full mix-blend-soft-light opacity-70"
+                  aria-hidden="true"
+                >
+                  <filter id="introRippleHome">
+                    <feTurbulence
+                      type="fractalNoise"
+                      baseFrequency="0.006 0.012"
+                      numOctaves="2"
+                      seed="7"
+                    >
+                      <animate
+                        attributeName="baseFrequency"
+                        dur="10s"
+                        values="0.006 0.012;0.008 0.016;0.006 0.012"
+                        repeatCount="indefinite"
+                      />
+                    </feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" scale="18" />
+                  </filter>
+                  <rect
+                    width="100%"
+                    height="100%"
+                    filter="url(#introRippleHome)"
+                    fill="url(#introGradHome)"
+                  />
+                  <defs>
+                    <linearGradient id="introGradHome" x1="0" x2="1" y1="0" y2="1">
+                      <stop
+                        offset="0%"
+                        className="dark:stop-color-indigo-400/25 stop-color-cyan-300/40"
+                      />
+                      <stop
+                        offset="100%"
+                        className="dark:stop-color-cyan-300/15 stop-color-indigo-400/30"
+                      />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="absolute inset-0 dark:bg-gradient-to-br dark:from-indigo-400/15 dark:to-cyan-300/10 bg-gradient-to-br from-cyan-300/30 to-indigo-400/20" />
+                <span className="sr-only">Water-glass aesthetic portrait</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* MAIN sections with uniform spacing */}
       <main className={container}>
-        {/* About (preview) */}
         <Section
           id="about"
           title="About"
           subtitle="Cybersecurity-focused tech problem solver who translates chaos into stable systems."
         >
-          <div className="grid sm:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2">What I'm into</h3>
-              <ul className="list-disc pl-5 space-y-2 text-sm text-neutral-700 dark:text-white/80">
-                <li>
-                  Network security, vulnerability management, and
-                  troubleshooting.
-                </li>
-                <li>
-                  Hands-on problem solving, straightforward processes, and
-                  outcomes you can trust.
-                </li>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Card className="p-5">
+              <h3 className="font-semibold mb-3">What I'm into</h3>
+              <ul className="list-disc pl-5 space-y-1.5 text-sm text-neutral-700 dark:text-white/80">
+                <li>Network security, vulnerability management, and troubleshooting.</li>
+                <li>Hands-on problem solving, straightforward processes, and outcomes you can trust.</li>
                 <li>Unity tinkering, photography, and eMTB rides.</li>
               </ul>
             </Card>
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2">Current focus</h3>
-              <div className="text-sm text-neutral-700 dark:text-white/80 space-y-2">
-                <p>
-                  🎓 Finishing BBA in Business IT & Cyber Security at Laurea UAS
-                </p>
+            <Card className="p-5">
+              <h3 className="font-semibold mb-3">Current focus</h3>
+              <div className="text-sm text-neutral-700 dark:text-white/80 space-y-1.5">
+                <p>🎓 Finishing BBA in Business IT & Cyber Security at Laurea UAS</p>
                 <p>🔍 Seeking security, IT ops, or technical support roles</p>
-                <p>
-                  📍 Based in Finland — available for remote or on-site roles
-                  within Finland only.
-                </p>
+                <p>📍 Based in Finland — available for remote or on-site roles within Finland only.</p>
               </div>
             </Card>
           </div>
         </Section>
 
-        {/* Quick stats */}
         <Section id="stats" title="At a glance">
-          <div className="grid sm:grid-cols-3 gap-6">
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                3+
-              </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
-                Years in tech
-              </div>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <Card className="p-5 text-center">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">3+</div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">Years in tech</div>
             </Card>
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                4.0
-              </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
-                GPA in Cybersecurity
-              </div>
+            <Card className="p-5 text-center">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">4.0</div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">GPA in Cybersecurity</div>
             </Card>
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                13k+
-              </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
-                Event attendees managed
-              </div>
+            <Card className="p-5 text-center">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">13k+</div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">Event attendees managed</div>
             </Card>
           </div>
         </Section>
 
-        {/* Callouts to other pages */}
         <Section id="explore" title="Explore">
-          <div className="grid sm:grid-cols-2 gap-6">
-            <Card className="p-6 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
                 <h3 className="font-semibold text-lg">Projects</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">
-                  Labs, builds, and experiments.
-                </p>
+                <p className="text-sm text-neutral-600 dark:text-white/70">Labs, builds, and experiments.</p>
               </div>
               <Button asChild>
                 <Link to="/projects" className="inline-flex items-center gap-2">
-                  View{" "}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  View <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </Card>
-            <Card className="p-6 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
+            <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
                 <h3 className="font-semibold text-lg">Photography</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">
-                  Selected shots — water, urban, and climbs.
-                </p>
+                <p className="text-sm text-neutral-600 dark:text-white/70">Selected shots — water, urban, and climbs.</p>
               </div>
               <Button asChild>
-                <Link
-                  to="/photography"
-                  className="inline-flex items-center gap-2"
-                >
-                  View{" "}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <Link to="/photography" className="inline-flex items-center gap-2">
+                  View <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </Card>

@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Base styles ===== */
+/* =======================
+   Base / Resets
+   ======================= */
 :root {
   color-scheme: light dark;
 }
@@ -22,130 +24,151 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Fallback background if WebGL is disabled / errors */
-  background: radial-gradient(120% 80% at 50% -10%, #eaf4ff 0%, #e8fbff 60%, #eef4ff 100%);
+  /* Light fallback (behind the aurora) */
+  background: #eaf4ff;
 }
 
-/* Dark theme fallback background (you toggle html.dark in App) */
 html.dark body {
-  background: radial-gradient(120% 80% at 50% -10%, #0b1022 0%, #0a1b3a 60%, #052534 100%);
+  /* Dark fallback (behind the aurora) */
+  background: #0b1022;
 }
 
 a {
   text-decoration: none;
 }
 
-/* optional: constrain prose if you use prose classes anywhere */
 .prose img {
   margin: 0;
 }
 
-/* Better text selection */
 ::selection {
   background: rgba(99, 102, 241, 0.25);
 }
 
-/* ===== Enhanced Glassmorphism utilities for better visibility ===== */
+/* =======================
+   Aurora Canvas Helpers
+   ======================= */
+/* Use this class on the <canvas> created by AuroraBackgroundVivid */
+.aurora-canvas {
+  position: fixed;
+  /* lives behind all content */
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  /* never blocks clicks */
+  display: block;
+
+  /* performance hints */
+  will-change: transform, opacity, filter;
+  transform: translateZ(0);
+}
+
+/* Optional: soft vignette to help text contrast near edges */
+.vignette-soft {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  /* above canvas, below content */
+  background: radial-gradient(120% 80% at 50% -10%, transparent 0%, rgba(0, 0, 0, 0.28) 100%);
+}
+
+/* =======================
+   Glass / Surface Utilities
+   ======================= */
 .glass {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.24);
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
 }
 
-/* Dark mode glass - much more opaque for visibility */
 html.dark .glass {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.40);
+  border-color: rgba(255, 255, 255, 0.20);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.30);
 }
 
-/* Stronger glass for important elements */
+/* Stronger glass for nav/hero areas */
 .glass-strong {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(20px) saturate(200%);
   -webkit-backdrop-filter: blur(20px) saturate(200%);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 html.dark .glass-strong {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.50);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(24px) saturate(220%);
+  -webkit-backdrop-filter: blur(24px) saturate(220%);
+  box-shadow:
+    0 14px 44px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Enhanced card visibility */
+/* Enhanced card (use sparingly) */
 .card-enhanced {
-  background: rgba(255, 255, 255, 0.4);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.40);
+  border: 2px solid rgba(255, 255, 255, 0.50);
+  border-radius: 1rem;
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 16px 48px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.10) inset,
+    0 16px 48px rgba(0, 0, 0, 0.10),
     0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 html.dark .card-enhanced {
-  background: rgba(15, 20, 35, 0.6);
+  background: rgba(15, 20, 35, 0.60);
   border: 2px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-    0 16px 48px rgba(0, 0, 0, 0.4),
-    0 8px 24px rgba(0, 0, 0, 0.2);
+    0 16px 48px rgba(0, 0, 0, 0.40),
+    0 8px 24px rgba(0, 0, 0, 0.20);
 }
 
-/* Soft ring glow for featured elements */
-.glow-ring {
-  position: relative;
-}
-
-.glow-ring::before {
-  content: "";
-  position: absolute;
-  inset: -12%;
-  border-radius: inherit;
-  background: radial-gradient(60% 60% at 50% 40%, rgba(99, 102, 241, 0.25), transparent 70%),
-    radial-gradient(60% 60% at 60% 60%, rgba(56, 189, 248, 0.22), transparent 70%);
-  filter: blur(24px);
-  z-index: -1;
-  pointer-events: none;
-}
-
-html.dark .glow-ring::before {
-  background: radial-gradient(60% 60% at 50% 40%, rgba(99, 102, 241, 0.35), transparent 70%),
-    radial-gradient(60% 60% at 60% 60%, rgba(56, 189, 248, 0.32), transparent 70%);
-}
-
-/* High contrast text for readability */
+/* Text legibility helper (use on headlines if needed) */
 .text-enhanced {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
 }
 
 html.dark .text-enhanced {
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.50);
 }
 
-/* Button enhancements for visibility */
+/* Button pop */
 .btn-enhanced {
   box-shadow:
-    0 4px 16px rgba(99, 102, 241, 0.2),
-    0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+    0 4px 16px rgba(99, 102, 241, 0.20),
+    0 2px 8px rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
 }
 
 .btn-enhanced:hover {
   box-shadow:
-    0 6px 20px rgba(99, 102, 241, 0.3),
+    0 6px 20px rgba(99, 102, 241, 0.30),
     0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =======================
+   Layout helpers
+   ======================= */
+.container-wide {
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
 }
