@@ -31,54 +31,21 @@ export default function App() {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
 
-  // Sensible defaults for both themes (readable by design)
-  const bgProps = dark
-    ? {
-        theme: "dark",
-        // richer colors but still behind content
-        intensity: 0.9,
-        speed: 0.22,
-        contrast: 1.1,
-        saturation: 1.05,
-        scaleY: 1.2,
-        stars: true,
-        starDensity: 0.9,
-        // smoke/shimmer feel
-        wispCount: 4,
-        wispOpacity: 0.22,
-        shimmerOpacity: 0.12,
-      }
-    : {
-        theme: "light",
-        // gentle/airy so text stays crisp
-        intensity: 0.55,
-        speed: 0.18,
-        contrast: 0.95,
-        saturation: 0.9,
-        scaleY: 1.1,
-        stars: false,
-        starDensity: 0,
-        // softer wisps in light mode
-        wispCount: 3,
-        wispOpacity: 0.1,
-        shimmerOpacity: 0.07,
-      };
-
   return (
     <BrowserRouter>
       {/* ---- Global animated background, fixed behind everything ---- */}
       <AuroraBackgroundVivid
         theme={dark ? "dark" : "light"}
-        intensity={dark ? 0.95 : 0.65}
-        speed={0.22}
-        saturation={1.05}
-        contrast={dark ? 1.1 : 1.0}
-        scaleY={1.15}
-        stars={true} // set false if you don't want stars in light
-        starDensity={dark ? 1.0 : 0.55}
-        wispCount={dark ? 5 : 3}
-        wispOpacity={dark ? 0.22 : 0.14}
-        shimmerOpacity={dark ? 0.1 : 0.06}
+        intensity={dark ? 0.85 : 0.75}
+        speed={0.18}
+        saturation={dark ? 1.0 : 0.9}
+        contrast={dark ? 1.05 : 1.02}
+        scaleY={1.2}
+        stars={true}
+        starDensity={dark ? 0.8 : 0.4}
+        wispCount={dark ? 4 : 3}
+        wispOpacity={dark ? 0.18 : 0.25}
+        shimmerOpacity={dark ? 0.08 : 0.12}
       />
 
       {/* ---- App content ---- */}

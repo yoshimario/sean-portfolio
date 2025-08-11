@@ -2,25 +2,21 @@
 import React, { useEffect, useRef } from "react";
 
 /**
- * AuroraBackgroundVivid
- * Renders two canvases fixed behind the app:
- *  - stars (tiny, twinkling; no big white circles)
- *  - aurora (smooth, curving wisps using noise fields)
- *
- * Props let App.jsx tune behavior for dark/light.
+ * AuroraBackgroundVivid - Improved Version
+ * More realistic aurora with organic flowing ribbons and better light mode visibility
  */
 export default function AuroraBackgroundVivid({
-  theme = "dark", // 'dark' | 'light'
-  intensity = 0.8, // overall aurora strength
-  speed = 0.22, // animation speed
-  contrast = 1.05, // color contrast
-  saturation = 1.0, // color pop
-  scaleY = 1.1, // vertical stretch of ribbons
-  stars = true, // show stars? App turns off in light mode if wanted
-  starDensity = 0.85, // 0..1 density (relative to screen area)
-  wispCount = 4, // number of aurora ribbons
-  wispOpacity = 0.2, // per‑wisp opacity
-  shimmerOpacity = 0.1, // high‑frequency shimmer overlay
+  theme = "dark",
+  intensity = 0.8,
+  speed = 0.22,
+  contrast = 1.05,
+  saturation = 1.0,
+  scaleY = 1.1,
+  stars = true,
+  starDensity = 0.85,
+  wispCount = 4,
+  wispOpacity = 0.2,
+  shimmerOpacity = 0.1,
 }) {
   const starRef = useRef(null);
   const auroraRef = useRef(null);
@@ -28,12 +24,10 @@ export default function AuroraBackgroundVivid({
   const starsCache = useRef(null);
   const lastSize = useRef({ w: 0, h: 0 });
 
-  // --- Simplex/Perlin-ish noise (fast GLSL-free JS) ---
-  // lightweight value-noise with smoothstep
+  // Enhanced noise with multiple octaves for more organic movement
   const makeNoise = () => {
     const perm = new Uint8Array(512);
     for (let i = 0; i < 256; i++) perm[i] = i;
-    // shuffle
     for (let i = 255; i > 0; i--) {
       const j = (Math.random() * (i + 1)) | 0;
       [perm[i], perm[j]] = [perm[j], perm[i]];
@@ -43,7 +37,6 @@ export default function AuroraBackgroundVivid({
     const fade = (t) => t * t * t * (t * (t * 6 - 15) + 10);
     const lerp = (a, b, t) => a + (b - a) * t;
     const grad = (h, x, y) => {
-      // 4 gradients
       switch (h & 3) {
         case 0:
           return x + y;
@@ -76,12 +69,28 @@ export default function AuroraBackgroundVivid({
 
       const ix0 = lerp(n0, n1, u);
       const ix1 = lerp(n2, n3, u);
-      // normalize to 0..1
       return (lerp(ix0, ix1, v) + 1) / 2;
     };
   };
 
-  // Create stars once per size, cached to an offscreen canvas
+  // Multi-octave noise for more complex patterns
+  const fbm = (noise1, noise2, x, y, octaves = 4) => {
+    let value = 0;
+    let amplitude = 0.5;
+    let frequency = 1;
+
+    for (let i = 0; i < octaves; i++) {
+      value += amplitude * noise1(x * frequency, y * frequency);
+      amplitude *= 0.5;
+      frequency *= 2;
+    }
+
+    // Add some cross-noise for more organic feel
+    value += 0.1 * noise2(x * 0.5, y * 0.8);
+
+    return Math.max(0, Math.min(1, value));
+  };
+
   const buildStars = (w, h) => {
     const off = document.createElement("canvas");
     off.width = w;
@@ -89,23 +98,19 @@ export default function AuroraBackgroundVivid({
     const ctx = off.getContext("2d");
     ctx.clearRect(0, 0, w, h);
 
-    // density scaled by area; tiny points only (no big circles)
-    const base = Math.floor((w * h) / 1600); // 1 per 40x40px
+    const base = Math.floor((w * h) / 1600);
     const count = Math.floor(base * starDensity);
 
     for (let i = 0; i < count; i++) {
       const x = Math.random() * w;
       const y = Math.random() * h;
-      const s = Math.random() < 0.7 ? 1 : 2; // 1px or 2px
-      const a = 0.35 + Math.random() * 0.45; // subtle alpha
+      const s = Math.random() < 0.7 ? 1 : 2;
+      const a = 0.35 + Math.random() * 0.45;
 
-      // pale warm/cool spread
-      const hue = 180 + Math.random() * 80; // teal to blue
+      const hue = 180 + Math.random() * 80;
       ctx.fillStyle = `hsla(${hue}, 70%, ${theme === "dark" ? 90 : 60}%, ${a})`;
-      // draw as tiny square for crispness (faster than arcs)
       ctx.fillRect(x, y, s, s);
 
-      // occasional larger very faint star
       if (Math.random() < 0.04) {
         const r = 0.5 + Math.random() * 0.8;
         const g = ctx.createRadialGradient(x, y, 0, x, y, 2.2);
@@ -118,7 +123,6 @@ export default function AuroraBackgroundVivid({
       }
     }
 
-    // faint vignette for depth
     const vg = ctx.createRadialGradient(
       w * 0.5,
       h * 0.2,
@@ -162,10 +166,10 @@ export default function AuroraBackgroundVivid({
     resize();
     window.addEventListener("resize", resize);
 
-    // noise fields
     const n1 = makeNoise();
     const n2 = makeNoise();
     const n3 = makeNoise();
+    const n4 = makeNoise();
 
     let t0 = performance.now();
 
@@ -176,121 +180,162 @@ export default function AuroraBackgroundVivid({
       const w = auroraCanvas.width;
       const h = auroraCanvas.height;
 
-      // draw stars (twinkle via low-amplitude sine)
+      // Stars with enhanced twinkling
       starCtx.clearRect(0, 0, w, h);
       if (stars && starsCache.current) {
-        // twinkle: modulate global alpha subtly
-        const twinkle = 0.92 + 0.08 * Math.sin(now * 0.0013);
+        const twinkle =
+          0.88 + 0.12 * Math.sin(now * 0.0013) + 0.05 * Math.sin(now * 0.0031);
         starCtx.globalAlpha = twinkle;
         starCtx.drawImage(starsCache.current, 0, 0);
         starCtx.globalAlpha = 1;
       }
 
-      // aurora
+      // Enhanced Aurora
       aurCtx.clearRect(0, 0, w, h);
 
-      // base palette differs in light vs dark
-      const baseHue = theme === "dark" ? 145 : 155; // green leaning
-      const hueSpread = theme === "dark" ? 70 : 55; // add some magenta/blue
-      const lightness = theme === "dark" ? 60 : 72;
+      // Better color palettes for both themes
+      const isDark = theme === "dark";
+      const baseHues = isDark ? [140, 160, 180, 200] : [145, 165, 185, 205];
+      const lightness = isDark ? [55, 65, 75] : [45, 55, 65];
+      const alpha = isDark ? 1.0 : 0.8;
 
-      // curved ribbons: sample noise along Bezier-like vertical arcs
+      const time = now * 0.0001;
       const bands = Math.max(1, wispCount | 0);
-      const stepY = h / (bands + 1);
 
+      // Create more organic, flowing ribbons
       for (let b = 0; b < bands; b++) {
-        const yCenter = stepY * (b + 1);
-        const bandScale = 0.0009 + b * 0.00025; // spatial freq
-        const bandSpeed = speed * (0.35 + b * 0.12);
+        const bandProgress = b / Math.max(1, bands - 1);
+        const yOffset = h * 0.2 + h * 0.6 * bandProgress;
+        const baseHue = baseHues[b % baseHues.length];
+        const bandSpeed = speed * (0.8 + bandProgress * 0.4);
 
         aurCtx.save();
-        aurCtx.globalAlpha = Math.min(
-          0.85,
-          wispOpacity * intensity * (1 - b * 0.07)
-        );
 
-        // gradient across the band width with hue drift
-        const hue = baseHue + (b / bands) * hueSpread;
-        const grad = aurCtx.createLinearGradient(
-          0,
-          yCenter - 120,
-          0,
-          yCenter + 120
-        );
-        grad.addColorStop(
-          0,
-          `hsla(${hue + 10}, ${80 * saturation}%, ${lightness - 8}%, 0)`
-        );
-        grad.addColorStop(
-          0.5,
-          `hsla(${hue}, ${95 * saturation}%, ${lightness}%, 1)`
-        );
-        grad.addColorStop(
-          1,
-          `hsla(${hue - 25}, ${80 * saturation}%, ${lightness - 10}%, 0)`
-        );
-        aurCtx.fillStyle = grad;
+        // Improved opacity calculation for light mode
+        const baseOpacity = isDark ? wispOpacity : wispOpacity * 1.8;
+        aurCtx.globalAlpha =
+          Math.min(0.9, baseOpacity * intensity * (1.2 - bandProgress * 0.3)) *
+          alpha;
 
-        aurCtx.beginPath();
+        // Create flowing ribbon path using multiple noise layers
+        const path = new Path2D();
+        const points = [];
+        const resolution = 8; // Higher resolution for smoother curves
 
-        // left to right curve with noise offset to mimic the "clawing" arc
-        const width = w;
-        const height = 240 * scaleY;
+        for (let x = 0; x <= w; x += resolution) {
+          const nx = x / w;
+          const t = time * bandSpeed;
 
-        for (let x = 0; x <= width; x += 6) {
-          const nx = x * bandScale;
-          const ty = now * 0.0003 * bandSpeed;
+          // Multiple noise octaves for organic movement
+          const wave1 = fbm(n1, n2, nx * 2 + b * 0.5, t * 0.7) - 0.5;
+          const wave2 = fbm(n3, n4, nx * 1.2 + b * 0.8, t * 0.5) - 0.5;
+          const wave3 = n1(nx * 4 + b, t * 1.2) - 0.5;
 
-          // two layers of noise for organic motion
-          const curve =
-            (n1(nx * 1.3 + 100 * b, ty * 1.1) - 0.5) * 180 +
-            (n2(nx * 0.6 + 50 * b, ty * 0.7) - 0.5) * 120;
+          // Combine waves for natural aurora movement
+          const yDisp = (wave1 * 120 + wave2 * 80 + wave3 * 40) * scaleY;
+          const thickness = 30 + wave2 * 25 + Math.sin(nx * Math.PI * 3) * 15;
 
-          const y = yCenter + curve * 0.8;
-          const thickness = 40 + (n3(nx * 0.9 - 200 * b, ty * 0.9) - 0.5) * 80; // breathing width
+          const y = yOffset + yDisp;
+          points.push({ x, y, thickness: Math.abs(thickness) });
+        }
 
-          if (x === 0) {
-            aurCtx.moveTo(x, y - thickness);
-          } else {
-            aurCtx.lineTo(x, y - thickness);
+        // Create smooth ribbon with variable thickness
+        if (points.length > 2) {
+          // Top curve
+          path.moveTo(points[0].x, points[0].y - points[0].thickness);
+          for (let i = 1; i < points.length - 1; i++) {
+            const curr = points[i];
+            const next = points[i + 1];
+            const cpX = (curr.x + next.x) / 2;
+            const cpY =
+              (curr.y + next.y) / 2 - (curr.thickness + next.thickness) / 2;
+            path.quadraticCurveTo(curr.x, curr.y - curr.thickness, cpX, cpY);
           }
+          path.lineTo(
+            points[points.length - 1].x,
+            points[points.length - 1].y - points[points.length - 1].thickness
+          );
+
+          // Bottom curve (reverse)
+          for (let i = points.length - 1; i > 0; i--) {
+            const curr = points[i];
+            const prev = points[i - 1];
+            const cpX = (curr.x + prev.x) / 2;
+            const cpY =
+              (curr.y + prev.y) / 2 + (curr.thickness + prev.thickness) / 2;
+            path.quadraticCurveTo(curr.x, curr.y + curr.thickness, cpX, cpY);
+          }
+          path.closePath();
+
+          // Enhanced gradient with more realistic aurora colors
+          const grad = aurCtx.createLinearGradient(
+            0,
+            yOffset - 100,
+            0,
+            yOffset + 100
+          );
+          const sat = Math.floor(60 + 30 * saturation);
+          const light = lightness[b % lightness.length];
+
+          grad.addColorStop(
+            0,
+            `hsla(${baseHue + 20}, ${sat}%, ${light + 10}%, 0)`
+          );
+          grad.addColorStop(
+            0.2,
+            `hsla(${baseHue + 10}, ${sat + 10}%, ${light + 5}%, 0.6)`
+          );
+          grad.addColorStop(
+            0.5,
+            `hsla(${baseHue}, ${sat + 20}%, ${light}%, 1)`
+          );
+          grad.addColorStop(
+            0.8,
+            `hsla(${baseHue - 10}, ${sat + 10}%, ${light + 5}%, 0.6)`
+          );
+          grad.addColorStop(
+            1,
+            `hsla(${baseHue - 20}, ${sat}%, ${light + 10}%, 0)`
+          );
+
+          aurCtx.fillStyle = grad;
+          aurCtx.filter = `contrast(${contrast}) blur(${isDark ? 0.5 : 0.8}px)`;
+          aurCtx.fill(path);
+          aurCtx.filter = "none";
         }
-        for (let x = width; x >= 0; x -= 6) {
-          const nx = x * bandScale;
-          const ty = now * 0.0003 * bandSpeed;
 
-          const curve =
-            (n1(nx * 1.3 + 100 * b, ty * 1.1) - 0.5) * 180 +
-            (n2(nx * 0.6 + 50 * b, ty * 0.7) - 0.5) * 120;
-
-          const y = yCenter + curve * 0.8;
-          const thickness = 40 + (n3(nx * 0.9 - 200 * b, ty * 0.9) - 0.5) * 80;
-
-          aurCtx.lineTo(x, y + thickness);
-        }
-        aurCtx.closePath();
-        aurCtx.filter = `contrast(${contrast})`;
-        aurCtx.fill();
-        aurCtx.filter = "none";
         aurCtx.restore();
       }
 
-      // high‑frequency shimmer smoke overlay
-      aurCtx.save();
-      aurCtx.globalCompositeOperation = "lighter";
-      aurCtx.globalAlpha = shimmerOpacity * intensity;
-      const cell = 32;
-      for (let y = 0; y < h; y += cell) {
-        for (let x = 0; x < w; x += cell) {
-          const v =
-            n2(x * 0.01 + now * 0.00025, y * 0.012 + 2000) * 0.6 +
-            n3(x * 0.008 - 1000, y * 0.01 + now * 0.00035) * 0.4;
-          const a = Math.min(0.8, v);
-          aurCtx.fillStyle = `rgba(255,255,255,${a * 0.08})`;
-          aurCtx.fillRect(x, y, cell, cell);
+      // Enhanced shimmer effect - more visible in light mode
+      if (shimmerOpacity > 0) {
+        aurCtx.save();
+        aurCtx.globalCompositeOperation = isDark ? "lighter" : "overlay";
+        aurCtx.globalAlpha = shimmerOpacity * intensity * (isDark ? 1 : 2);
+
+        const shimmerSize = isDark ? 40 : 60;
+        for (let y = 0; y < h; y += shimmerSize) {
+          for (let x = 0; x < w; x += shimmerSize) {
+            const noise = fbm(
+              n2,
+              n3,
+              x * 0.008 + time * 0.3,
+              y * 0.01 + time * 0.2,
+              3
+            );
+            const brightness = Math.pow(noise, 2) * 0.8;
+
+            if (brightness > 0.2) {
+              const shimmerAlpha = (brightness - 0.2) * 0.15;
+              aurCtx.fillStyle = isDark
+                ? `rgba(200,240,255,${shimmerAlpha})`
+                : `rgba(160,200,240,${shimmerAlpha * 0.6})`;
+              aurCtx.fillRect(x, y, shimmerSize, shimmerSize);
+            }
+          }
         }
+        aurCtx.restore();
       }
-      aurCtx.restore();
 
       rafRef.current = requestAnimationFrame(render);
     };
@@ -314,8 +359,7 @@ export default function AuroraBackgroundVivid({
     shimmerOpacity,
   ]);
 
-  // Two fixed canvases behind everything
-  const baseZ = -1; // ensure behind content
+  const baseZ = -1;
   const commonStyle = {
     position: "fixed",
     inset: 0,
