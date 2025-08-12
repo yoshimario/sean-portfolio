@@ -2,13 +2,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Background layer (smoke + shimmer aurora)
 import AuroraBackgroundVivid from "./components/AuroraBackgroundVivid";
 
-// Layout
 import Header from "./components/Header";
 
-// Pages
 import Home from "./pages/Home.jsx";
 import Projects from "./pages/Projects.jsx";
 import Photography from "./pages/Photography.jsx";
@@ -17,45 +14,64 @@ import Education from "./pages/Education.jsx";
 import Writing from "./pages/Writing.jsx";
 import Contact from "./pages/Contact.jsx";
 
-// Global styles
 import "./index.css";
 import "./App.css";
 
 const cx = (...c) => c.filter(Boolean).join(" ");
 
 export default function App() {
-  const [dark, setDark] = React.useState(true);
+  // Respect system preference; default to dark if unknown
+  const prefersDark =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-  // Reflect dark state on <html> for Tailwind's "dark:" classes
+  const [dark, setDark] = React.useState(prefersDark ?? true);
+
+  // Tailwind "dark:" classes toggle
   React.useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
 
   return (
     <BrowserRouter>
-      {/* ---- Global animated background, fixed behind everything ---- */}
+      {/* Global animated background (fixed behind content, above body) */}
       <AuroraBackgroundVivid
+        zIndex={0}
         theme={dark ? "dark" : "light"}
-        intensity={dark ? 0.85 : 0.75}
-        speed={0.18}
-        saturation={dark ? 1.0 : 0.9}
-        contrast={dark ? 1.05 : 1.02}
-        scaleY={1.2}
-        stars={true}
-        starDensity={dark ? 0.8 : 0.4}
-        wispCount={dark ? 4 : 3}
-        wispOpacity={dark ? 0.18 : 0.25}
-        shimmerOpacity={dark ? 0.08 : 0.12}
+        showInLight // ✅ show aurora in light
+        lightSky="none" // transparent; body shows #eaf4ff
+        /* Stars only in dark */
+        stars
+        starsInLight={false}
+        /* Light – very subtle, soft blur */
+        lightIntensity={0.1}
+        lightMaxOpacity={0.08}
+        lightBloom={1.25}
+        lightSaturation={0.92}
+        lightRibbonSeparation={0.32} // more gap in light
+        lightVeilStrength={0.12}
+        /* Dark – elegant and softer than now */
+        intensity={0.22}
+        maxOpacity={0.16}
+        bloom={1.25}
+        saturation={1.0}
+        ribbonSeparation={0.2} // closer so they flow into each other
+        veilStrength={0.3}
+        /* shared motion + shapes */
+        ribbonCount={2} // 2 flowing ribbons looks best
+        ribbonWidth={26}
+        speed={0.085}
+        puffRadius={118}
+        puffStepPx={68}
       />
-
-      {/* ---- App content ---- */}
+      {/* App content (transparent so background shows) */}
       <div
         className={cx(
           "relative z-10 min-h-svh flex flex-col",
           dark ? "text-white" : "text-neutral-900"
         )}
       >
-        {/* Header receives theme controls */}
         <Header dark={dark} setDark={setDark} />
 
         <main className="flex-1">
