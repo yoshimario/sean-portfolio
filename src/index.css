@@ -23,13 +23,12 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* Light fallback (behind the aurora) */
+  /* Light fallback (behind aurora) */
   background: #eaf4ff;
 }
 
 html.dark body {
-  /* Dark fallback (behind the aurora) */
+  /* Dark fallback (behind aurora) */
   background: #0b1022;
 }
 
@@ -48,56 +47,61 @@ a {
 /* =======================
    Aurora Canvas Helpers
    ======================= */
-/* Use this class on the <canvas> created by AuroraBackgroundVivid */
 .aurora-canvas {
   position: fixed;
-  /* lives behind all content */
   inset: 0;
   z-index: 0;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  /* never blocks clicks */
   display: block;
-
-  /* performance hints */
   will-change: transform, opacity, filter;
   transform: translateZ(0);
 }
 
-/* Optional: soft vignette to help text contrast near edges */
+/* Vignette for better contrast (stronger in dark mode) */
 .vignette-soft {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 1;
-  /* above canvas, below content */
-  background: radial-gradient(120% 80% at 50% -10%, transparent 0%, rgba(0, 0, 0, 0.28) 100%);
+  background: radial-gradient(120% 80% at 50% -10%,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 80%,
+      rgba(0, 0, 0, 0.32) 100%);
+}
+
+html.dark .vignette-soft {
+  background: radial-gradient(120% 80% at 50% -10%,
+      transparent 0%,
+      rgba(0, 0, 0, 0.25) 75%,
+      rgba(0, 0, 0, 0.45) 100%);
 }
 
 /* =======================
    Glass / Surface Utilities
    ======================= */
 .glass {
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.28);
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 html.dark .glass {
-  background: rgba(0, 0, 0, 0.40);
-  border-color: rgba(255, 255, 255, 0.20);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.30);
+  background: rgba(0, 0, 0, 0.52);
+  /* Increased for readability */
+  border-color: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(22px) saturate(185%);
+  -webkit-backdrop-filter: blur(22px) saturate(185%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* Stronger glass for nav/hero areas */
 .glass-strong {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.20);
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(20px) saturate(200%);
@@ -108,18 +112,18 @@ html.dark .glass {
 }
 
 html.dark .glass-strong {
-  background: rgba(0, 0, 0, 0.50);
+  background: rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(24px) saturate(220%);
   -webkit-backdrop-filter: blur(24px) saturate(220%);
   box-shadow:
-    0 14px 44px rgba(0, 0, 0, 0.45),
+    0 14px 44px rgba(0, 0, 0, 0.48),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Enhanced card (use sparingly) */
 .card-enhanced {
-  background: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.45);
   border: 2px solid rgba(255, 255, 255, 0.50);
   border-radius: 1rem;
   backdrop-filter: blur(24px) saturate(200%);
@@ -131,23 +135,24 @@ html.dark .glass-strong {
 }
 
 html.dark .card-enhanced {
-  background: rgba(15, 20, 35, 0.60);
+  background: rgba(15, 20, 35, 0.70);
+  /* More opaque */
   border: 2px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-    0 16px 48px rgba(0, 0, 0, 0.40),
-    0 8px 24px rgba(0, 0, 0, 0.20);
+    0 16px 48px rgba(0, 0, 0, 0.42),
+    0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* Text legibility helper (use on headlines if needed) */
+/* Text legibility helper */
 .text-enhanced {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
 }
 
 html.dark .text-enhanced {
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.50);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
 /* Button pop */

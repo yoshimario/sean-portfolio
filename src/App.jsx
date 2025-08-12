@@ -37,33 +37,37 @@ export default function App() {
     <BrowserRouter>
       {/* Global animated background (fixed behind content, above body) */}
       <AuroraBackgroundVivid
-        zIndex={0}
         theme={dark ? "dark" : "light"}
-        showInLight // ✅ show aurora in light
-        lightSky="none" // transparent; body shows #eaf4ff
-        /* Stars only in dark */
-        stars
+        showInLight
+        lightSky="none"
         starsInLight={false}
-        /* Light – very subtle, soft blur */
-        lightIntensity={0.1}
-        lightMaxOpacity={0.08}
+        /* DARK: softer & more readable */
+        intensity={0.2}
+        maxOpacity={0.22}
+        bloom={0.95}
+        saturation={1.15}
+        /* Make a big “safe” lane for text */
+        safeBandTop={0.22}
+        safeBandBottom={0.85}
+        safeBandReduce={0.78} // 78% dimming inside the band
+        /* Stars a touch quieter */
+        starDensity={0.32}
+        starSize={0.7}
+        /* Keep your light-mode settings as you like */
+        lightIntensity={0.42}
+        lightMaxOpacity={0.34}
+        lightSaturation={1.25}
         lightBloom={1.25}
-        lightSaturation={0.92}
-        lightRibbonSeparation={0.32} // more gap in light
-        lightVeilStrength={0.12}
-        /* Dark – elegant and softer than now */
-        intensity={0.22}
-        maxOpacity={0.16}
-        bloom={1.25}
-        saturation={1.0}
-        ribbonSeparation={0.2} // closer so they flow into each other
-        veilStrength={0.3}
-        /* shared motion + shapes */
-        ribbonCount={2} // 2 flowing ribbons looks best
-        ribbonWidth={26}
-        speed={0.085}
-        puffRadius={118}
-        puffStepPx={68}
+        ribbonCount={3}
+        /* more motion */
+        speed={0.14} // was ~0.085
+        curveAmp={0.24} // deeper swoop
+        curveFreq={1.25} // a touch more oscillation
+        weaveAmp={0.12} // stronger ribbon weave
+        noiseWarp={0.12} // extra wispy wobble
+        /* more puff overlap → smoother ribbons */
+        puffRadius={140}
+        puffStepPx={52}
       />
       {/* App content (transparent so background shows) */}
       <div
