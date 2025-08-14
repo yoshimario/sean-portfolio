@@ -192,7 +192,13 @@ export default function Home() {
                     fill="url(#introGradHome)"
                   />
                   <defs>
-                    <linearGradient id="introGradHome" x1="0" x2="1" y1="0" y2="1">
+                    <linearGradient
+                      id="introGradHome"
+                      x1="0"
+                      x2="1"
+                      y1="0"
+                      y2="1"
+                    >
                       <stop
                         offset="0%"
                         className="dark:stop-color-indigo-400/25 stop-color-cyan-300/40"
@@ -223,17 +229,28 @@ export default function Home() {
             <Card className="p-5">
               <h3 className="font-semibold mb-3">What I'm into</h3>
               <ul className="list-disc pl-5 space-y-1.5 text-sm text-neutral-700 dark:text-white/80">
-                <li>Network security, vulnerability management, and troubleshooting.</li>
-                <li>Hands-on problem solving, straightforward processes, and outcomes you can trust.</li>
+                <li>
+                  Network security, vulnerability management, and
+                  troubleshooting.
+                </li>
+                <li>
+                  Hands-on problem solving, straightforward processes, and
+                  outcomes you can trust.
+                </li>
                 <li>Unity tinkering, photography, and eMTB rides.</li>
               </ul>
             </Card>
             <Card className="p-5">
               <h3 className="font-semibold mb-3">Current focus</h3>
               <div className="text-sm text-neutral-700 dark:text-white/80 space-y-1.5">
-                <p>🎓 Finishing BBA in Business IT & Cyber Security at Laurea UAS</p>
+                <p>
+                  🎓 Finishing BBA in Business IT & Cyber Security at Laurea UAS
+                </p>
                 <p>🔍 Seeking security, IT ops, or technical support roles</p>
-                <p>📍 Based in Finland — available for remote or on-site roles within Finland only.</p>
+                <p>
+                  📍 Based in Finland — available for remote or on-site roles
+                  within Finland only.
+                </p>
               </div>
             </Card>
           </div>
@@ -242,16 +259,28 @@ export default function Home() {
         <Section id="stats" title="At a glance">
           <div className="grid sm:grid-cols-3 gap-4">
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">3+</div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">Years in tech</div>
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                3+
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">
+                Years in tech
+              </div>
             </Card>
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">4.0</div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">GPA in Cybersecurity</div>
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                4.0
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">
+                GPA in Cybersecurity
+              </div>
             </Card>
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">13k+</div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">Event attendees managed</div>
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                13k+
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-white/70">
+                Event attendees managed
+              </div>
             </Card>
           </div>
         </Section>
@@ -261,22 +290,31 @@ export default function Home() {
             <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
                 <h3 className="font-semibold text-lg">Projects</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">Labs, builds, and experiments.</p>
+                <p className="text-sm text-neutral-600 dark:text-white/70">
+                  Labs, builds, and experiments.
+                </p>
               </div>
               <Button asChild>
                 <Link to="/projects" className="inline-flex items-center gap-2">
-                  View <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  View{" "}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </Card>
             <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
                 <h3 className="font-semibold text-lg">Photography</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">Selected shots — water, urban, and climbs.</p>
+                <p className="text-sm text-neutral-600 dark:text-white/70">
+                  Selected shots — water, urban, and climbs.
+                </p>
               </div>
               <Button asChild>
-                <Link to="/photography" className="inline-flex items-center gap-2">
-                  View <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <Link
+                  to="/photography"
+                  className="inline-flex items-center gap-2"
+                >
+                  View{" "}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </Card>
