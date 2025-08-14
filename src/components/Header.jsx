@@ -1,7 +1,7 @@
-// src/components/Header.jsx
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Sun, Moon, ExternalLink } from "lucide-react";
+import { useSound } from "../sound/SoundProvider.jsx";
 
 const cx = (...c) => c.filter(Boolean).join(" ");
 const container = "mx-auto max-w-6xl px-4 sm:px-6 lg:px-8";
@@ -15,9 +15,15 @@ export default function Header({ dark = true, setDark = () => {} }) {
     { to: "/education", label: "Education" },
     { to: "/writing", label: "Writing" },
   ];
-
   const baseLink =
     "px-3 py-2 rounded-xl text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400";
+
+  const sound = useSound();
+  const toggleSound = async () => {
+    if (sound.isEnabled) return sound.disable();
+    sound.setConsented(true); // remember for future visits
+    await sound.enable(); // fades in, needs a click
+  };
 
   return (
     <header
@@ -27,7 +33,6 @@ export default function Header({ dark = true, setDark = () => {} }) {
       )}
       style={{ height: 64 }}
     >
-      {/* subtle top gradient highlight for depth */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 to-transparent dark:from-white/[0.06]" />
 
       <div
@@ -63,11 +68,8 @@ export default function Header({ dark = true, setDark = () => {} }) {
                 cx(
                   baseLink,
                   dark
-                    ? // Stronger dark hover + glow
-                      "text-white/75 hover:text-white hover:bg-white/16 hover:shadow-[0_0_8px_rgba(255,255,255,0.25)]"
-                    : // Light hover stays subtle
-                      "text-neutral-700 hover:text-neutral-900 hover:bg-black/5",
-                  // Active comes last so it wins
+                    ? "text-white/75 hover:text-white hover:bg-white/16 hover:shadow-[0_0_8px_rgba(255,255,255,0.25)]"
+                    : "text-neutral-700 hover:text-neutral-900 hover:bg-black/5",
                   isActive &&
                     (dark
                       ? "bg-white/24 text-white shadow-[0_0_8px_rgba(255,255,255,0.25)]"
@@ -79,18 +81,15 @@ export default function Header({ dark = true, setDark = () => {} }) {
             </NavLink>
           ))}
 
-          {/* Contact — stronger in both themes */}
+          {/* Contact */}
           <NavLink
             to="/contact"
             className={({ isActive }) =>
               cx(
                 "ml-1 px-3 py-2 rounded-2xl text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 border",
                 dark
-                  ? // Dark: brighter fill + glow on hover
-                    "text-white border-white/20 bg-transparent hover:bg-white/24 hover:border-white/30 hover:shadow-[0_0_8px_rgba(255,255,255,0.25)]"
-                  : // Light: solid dark pill on hover
-                    "text-neutral-900 border-neutral-200 bg-transparent hover:bg-neutral-900 hover:text-white",
-                // Active last
+                  ? "text-white border-white/20 bg-transparent hover:bg-white/24 hover:border-white/30 hover:shadow-[0_0_8px_rgba(255,255,255,0.25)]"
+                  : "text-neutral-900 border-neutral-200 bg-transparent hover:bg-neutral-900 hover:text-white",
                 isActive &&
                   (dark
                     ? "bg-white/28 text-white border-white/30 shadow-[0_0_6px_rgba(255,255,255,0.25)]"
@@ -114,6 +113,22 @@ export default function Header({ dark = true, setDark = () => {} }) {
             Resume <ExternalLink className="w-4 h-4" />
           </a>
 
+          {/* Sound toggle */}
+          <button
+            onClick={toggleSound}
+            aria-pressed={sound.isEnabled}
+            aria-label={sound.isEnabled ? "Turn sound off" : "Enable sound"}
+            className={cx(
+              "ml-1 h-10 rounded-2xl inline-flex items-center justify-center px-3 text-sm font-medium transition-colors border",
+              dark
+                ? "text-white border-white/20 hover:bg-white/12"
+                : "text-neutral-900 border-neutral-200 hover:bg-black/5"
+            )}
+            title={sound.isEnabled ? "Sound On" : "Enable Sound"}
+          >
+            {sound.isEnabled ? "🔊 Sound" : "🔇 Sound"}
+          </button>
+
           {/* Theme toggle */}
           <button
             onClick={() => setDark(!dark)}
@@ -127,8 +142,22 @@ export default function Header({ dark = true, setDark = () => {} }) {
           </button>
         </nav>
 
-        {/* Mobile: theme toggle only */}
-        <div className="md:hidden">
+        {/* Mobile controls */}
+        <div className="md:hidden flex items-center gap-1">
+          <button
+            onClick={toggleSound}
+            aria-pressed={sound.isEnabled}
+            aria-label={sound.isEnabled ? "Turn sound off" : "Enable sound"}
+            className={cx(
+              "h-10 px-3 rounded-2xl inline-flex items-center justify-center text-sm font-medium transition-colors border",
+              dark
+                ? "text-white border-white/20 hover:bg-white/12"
+                : "text-neutral-900 border-neutral-200 hover:bg-black/5"
+            )}
+          >
+            {sound.isEnabled ? "🔊" : "🔇"}
+          </button>
+
           <button
             onClick={() => setDark(!dark)}
             aria-label="Toggle theme"
@@ -144,7 +173,6 @@ export default function Header({ dark = true, setDark = () => {} }) {
         </div>
       </div>
 
-      {/* soft bottom edge glow / divider */}
       <div className="pointer-events-none h-px w-full bg-gradient-to-r from-transparent via-black/15 to-transparent dark:via-white/20" />
     </header>
   );

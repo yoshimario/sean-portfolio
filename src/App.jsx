@@ -85,10 +85,17 @@ export default function App() {
           name="Sean Kipinä"
           theme={dark ? "dark" : "light"}
           ttlHours={24}
-          allowSound={false}
-          force={true} // while testing
-          storageKey="intro:nordic:v4"
-          durationMs={6000} // <-- 6 seconds
+          force={true} // turn on to test every refresh; off for TTL behavior
+          storageKey="intro:nordic:v5"
+          durationMs={6000} // 6 seconds on screen
+          allowSound={true} // show audio controls
+          ambientSrc="/audio/forest-ambience.mp3"
+          whooshSrc="/audio/aurora-whoosh.mp3"
+          startVolume={0.0}
+          ambientVolume={0.35}
+          whooshVolume={0.8}
+          defaultMuted={false} // <--- NEW PROP in component
+          autoPlayUnlocked={true} // <--- NEW PROP in component
         />
 
         {/* ---------- Global animated background (behind all content) ---------- */}
