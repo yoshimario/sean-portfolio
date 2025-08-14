@@ -1,6 +1,6 @@
 // src/pages/Writing.jsx
 import React, { useState } from "react";
-import placementPDF from "../assets/docs/Kipinä_Sean_Placement1_Report.pdf";
+import placementPDF from "/src/docs/Kipinä_Sean_Placement1_Report.pdf";
 
 import {
   Calendar,

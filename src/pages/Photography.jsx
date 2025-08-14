@@ -120,9 +120,9 @@ function Lightbox({ isOpen, photos, currentIndex, onClose, onNext, onPrev }) {
 }
 
 /* ----- Load categories from folders (Vite glob) ----- */
-const waterPhotos = Object.values(
+const naturePhotos = Object.values(
   import.meta.glob(
-    "../assets/img/photography/water/*.{jpg,jpeg,png,webp,avif}",
+    "../assets/img/photography/nature/*.{jpg,jpeg,png,webp,avif}",
     { eager: true, query: "?url", import: "default" }
   )
 );
@@ -132,9 +132,9 @@ const urbanPhotos = Object.values(
     { eager: true, query: "?url", import: "default" }
   )
 );
-const climbPhotos = Object.values(
+const lifePhotos = Object.values(
   import.meta.glob(
-    "../assets/img/photography/climbs/*.{jpg,jpeg,png,webp,avif}",
+    "../assets/img/photography/life/*.{jpg,jpeg,png,webp,avif}",
     { eager: true, query: "?url", import: "default" }
   )
 );
@@ -142,10 +142,10 @@ const climbPhotos = Object.values(
 export default function Photography() {
   const categories = useMemo(
     () => ({
-      All: [...waterPhotos, ...urbanPhotos, ...climbPhotos],
-      Water: waterPhotos,
+      All: [...naturePhotos, ...urbanPhotos, ...lifePhotos],
+      Nature: naturePhotos,
       Urban: urbanPhotos,
-      Climbing: climbPhotos,
+      Life: lifePhotos,
     }),
     []
   );

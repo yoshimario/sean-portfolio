@@ -102,7 +102,9 @@ export default function Header({ dark = true, setDark = () => {} }) {
 
           {/* Resume */}
           <a
-            href="/Sean-KipinaCV.pdf"
+            href="/src/docs/Sean-KipinaCV.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className={cx(
               "ml-2 inline-flex items-center gap-2 rounded-2xl text-sm font-medium px-3 py-2 btn-enhanced border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400",
               dark
@@ -110,7 +112,7 @@ export default function Header({ dark = true, setDark = () => {} }) {
                 : "border-neutral-200 bg-white/70 hover:bg-white/80 text-neutral-900"
             )}
           >
-            Resume <ExternalLink className="w-4 h-4" />
+            CV/Resume <ExternalLink className="w-4 h-4" />
           </a>
 
           {/* Sound toggle */}
