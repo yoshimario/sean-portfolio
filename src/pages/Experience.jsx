@@ -13,9 +13,9 @@ const Card = ({ className = "", children }) => (
     className={cx(
       "rounded-2xl border shadow-lg backdrop-blur-xl transition-colors",
       // Light
-      "border-neutral-200/70 bg-white/80 text-neutral-900",
-      // Dark — more opaque so text stays readable over aurora
-      "dark:border-white/15 dark:bg-[rgba(10,15,30,0.72)] dark:text-white",
+      "border-neutral-200/70 bg-white/85 text-neutral-900",
+      // Dark (more opaque for legibility over aurora)
+      "dark:border-white/15 dark:bg-[rgba(10,15,30,0.78)] dark:text-white",
       className
     )}
   >
@@ -58,11 +58,11 @@ const CardDescription = ({ children, className = "" }) => (
 const Badge = ({ children, variant = "default", className = "" }) => {
   const variants = {
     default:
-      "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-400/20",
+      "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-400/25",
     success:
-      "bg-green-100 text-green-700 dark:bg-green-950/60 dark:text-green-200 border border-green-200/70 dark:border-green-400/20",
+      "bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-200 border border-green-200/70 dark:border-green-400/25",
     warning:
-      "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-200 border border-yellow-200/70 dark:border-yellow-400/20",
+      "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-200 border border-yellow-200/70 dark:border-yellow-400/25",
   };
   return (
     <span
@@ -85,7 +85,7 @@ function Section({ title, subtitle, children }) {
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-2 text-neutral-700 dark:text-white/80 max-w-2xl">
+          <p className="mt-2 text-neutral-700 dark:text-white/85 max-w-2xl">
             {subtitle}
           </p>
         )}
@@ -144,12 +144,7 @@ const EXPERIENCE = [
       "Coordinated and managed event logistics, ensuring the timely completion of scheduled activities.",
       "Facilitated cross-team communication and task coordination, enabling efficient collaboration between volunteers, staff, and event stakeholders.",
     ],
-    skills: [
-      "Team Leadership",
-      "Process Automation",
-      "Event Logistics",
-      "IT Support",
-    ],
+    skills: ["Team Leadership", "Process Automation", "Event Logistics", "IT Support"],
     achievements: [
       { metric: "13,000+", label: "Attendees supported" },
       { metric: "35%", label: "Response time improvement" },
@@ -195,12 +190,7 @@ const EXPERIENCE = [
       "Followed detailed test scripts to assess game stability, performance, and compliance with QA standards.",
       "Provided actionable feedback on gameplay mechanics, contributing to improved user experience prior to final release.",
     ],
-    skills: [
-      "Quality Assurance",
-      "Bug Testing",
-      "Documentation",
-      "Team Collaboration",
-    ],
+    skills: ["Quality Assurance", "Bug Testing", "Documentation", "Team Collaboration"],
     achievements: [
       { metric: "30+", label: "Test cases per day" },
       { metric: "50+", label: "Bugs documented" },
@@ -217,10 +207,10 @@ function ExperienceCard({ experience }) {
         <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex-1 min-w-0">
             <CardTitle className="mb-1">{experience.role}</CardTitle>
-            <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-medium mb-2">
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-300 font-medium mb-2">
               <span className="truncate">{experience.org}</span>
             </div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-white/75">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-white/80">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" aria-hidden="true" />
                 <span>{experience.time}</span>
@@ -238,22 +228,18 @@ function ExperienceCard({ experience }) {
       </CardHeader>
 
       <CardContent>
-        {/* Achievements — DARKER chips in dark mode */}
-        <div
-          className={cx(
-            "grid grid-cols-3 gap-3 md:gap-4 mb-6 p-4 rounded-xl border",
-            // light: soft, readable on white
-            "border-white/40 bg-white/70 text-neutral-900",
-            // dark: strong contrast on aurora
-            "dark:border-white/10 dark:bg-[rgba(255,255,255,0.06)] dark:text-white"
-          )}
-        >
+        {/* Achievements — now high-contrast in dark mode */}
+        <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6 p-4 rounded-xl border shadow-inner
+                         bg-white/75 text-neutral-900 border-neutral-200/70
+                         dark:bg-black/45 dark:text-white dark:border-white/15">
           {experience.achievements.map((a) => (
             <div key={a.label} className="text-center">
-              <div className="text-lg md:text-xl font-bold text-indigo-800 dark:text-indigo-300">
+              <div className="text-lg md:text-xl font-bold text-indigo-700 dark:text-indigo-300">
                 {a.metric}
               </div>
-              <div className="text-[11px] md:text-xs opacity-80">{a.label}</div>
+              <div className="text-[11px] md:text-xs opacity-90">
+                {a.label}
+              </div>
             </div>
           ))}
         </div>
@@ -335,7 +321,7 @@ export default function Experience() {
         {/* Summary cards */}
         <div className="mt-14 grid sm:grid-cols-3 gap-4 md:gap-6">
           <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-1">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
               16+
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
@@ -343,7 +329,7 @@ export default function Experience() {
             </div>
           </Card>
           <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-1">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
               13k+
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
@@ -351,7 +337,7 @@ export default function Experience() {
             </div>
           </Card>
           <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-1">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
               2
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">

@@ -1,13 +1,20 @@
-// src/pages/Experience.jsx
+// src/pages/Education.jsx
 import React from "react";
-import { Calendar, MapPin, TrendingUp } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Award,
+  BookOpen,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 
 /* -------------------- helpers & layout -------------------- */
 const cx = (...c) => c.filter(Boolean).join(" ");
 const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 const section = "py-16 md:py-20";
 
-/* -------------------- UI primitives (readability tuned) -------------------- */
+/* -------------------- UI primitives (match Experience.jsx) -------------------- */
 const Card = ({ className = "", children }) => (
   <div
     className={cx(
@@ -63,6 +70,8 @@ const Badge = ({ children, variant = "default", className = "" }) => {
       "bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-200 border border-green-200/70 dark:border-green-400/25",
     warning:
       "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-200 border border-yellow-200/70 dark:border-yellow-400/25",
+    honor:
+      "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-200 border border-purple-200/70 dark:border-purple-400/25",
   };
   return (
     <span
@@ -95,173 +104,162 @@ function Section({ title, subtitle, children }) {
   );
 }
 
-/* -------------------- data -------------------- */
-const EXPERIENCE = [
+/* -------------------- data (unchanged content) -------------------- */
+const EDUCATION = [
   {
-    org: "Hublet Oy",
-    role: "Hublet Security Expert – Trainee",
-    time: "Mar 2025 – Aug 2025",
-    location: "Helsinki, Finland",
-    type: "Cybersecurity",
+    school: "Laurea University of Applied Sciences",
+    degree: "BBA Business Information Technology",
+    specialization: "Cyber Security",
+    time: "Aug 2023 – present",
+    location: "Espoo, Finland",
+    status: "In Progress",
+    gpa: null,
     description:
-      "Security trainee focused on vulnerability assessment, secure update testing, documentation, and security enablement across teams and customers.",
-    bullets: [
-      "Conducted vulnerability assessments of the Hublet Solution; identified risks and recommended mitigation strategies.",
-      "Tested software updates for reliability and stability to support a secure release process.",
-      "Created, updated, and maintained internal and customer-facing security documentation (Help Center, FAQs).",
-      "Contributed to security awareness materials for customer onboarding and internal staff training.",
-      "Improved tender documentation and IT/customer support resources with security inputs.",
-      "Collaborated with supervisors and cross‑functional teams to address issues and enhance overall security posture.",
-      "Applied theoretical cybersecurity knowledge to practical tasks with strong attention to detail and problem-solving.",
+      "Comprehensive program combining business acumen with technical cybersecurity skills, preparing for leadership roles in IT security.",
+    highlights: [
+      "Network security and vulnerability assessment",
+      "Risk management and compliance frameworks",
+      "Business continuity and incident response",
+      "Cloud security architectures",
     ],
     skills: [
-      "Vulnerability Assessment",
-      "Application Security",
-      "Secure SDLC",
-      "Risk Analysis",
-      "Technical Writing",
-      "Security Awareness",
-      "Cross‑functional Collaboration",
+      "Network Security",
+      "Risk Assessment",
+      "Compliance",
+      "Business Analysis",
     ],
-    achievements: [
-      { metric: "Assessments", label: "Security posture reviews completed" },
-      { metric: "Docs", label: "Security guides & FAQs maintained" },
-      { metric: "Releases", label: "Updates validated for stability" },
-    ],
+    logoPlaceholder: "🏛️",
   },
   {
-    org: "Slush",
-    role: "Customer Success Team (Offline) Group Lead",
-    time: "Sep 2023 – Dec 2023",
-    location: "Helsinki, Finland",
-    type: "Event Management",
+    school: "Tacoma Community College",
+    degree: "AS Cybersecurity and Networking",
+    specialization: null,
+    time: "2018 – 2020",
+    location: "Tacoma, USA",
+    status: "Completed",
+    gpa: "4.0 GPA",
+    honors: "PTK Honors",
     description:
-      "Led customer success operations for Europe's leading startup event with 13,000+ attendees.",
-    bullets: [
-      "Led and supervised a team of 10+ volunteers, providing training, guidance, and performance oversight to ensure smooth event operations for a large-scale international audience.",
-      "Streamlined and automated workflow processes, improving response times and overall team efficiency.",
-      "Developed and implemented a volunteer onboarding and training program, enhancing role readiness and operational consistency.",
-      "Coordinated and managed event logistics, ensuring the timely completion of scheduled activities.",
-      "Facilitated cross-team communication and task coordination, enabling efficient collaboration between volunteers, staff, and event stakeholders.",
-    ],
-    skills: ["Team Leadership", "Process Automation", "Event Logistics", "IT Support"],
-    achievements: [
-      { metric: "13,000+", label: "Attendees supported" },
-      { metric: "35%", label: "Response time improvement" },
-      { metric: "98%", label: "On-time completion rate" },
-    ],
-  },
-  {
-    org: "McDonald's",
-    role: "Food Service Worker",
-    time: "Nov 2022 – May 2023",
-    location: "Oulu, Finland",
-    type: "Operations",
-    description:
-      "High-volume food service operations with focus on efficiency and quality control.",
-    bullets: [
-      "Prepared 150+ meals/shift; reduced waste by ~15% via inventory & portion control.",
-      "Ensured 100% hygiene compliance; maintained equipment to reduce downtime by ~25%.",
+      "Intensive technical program focused on network administration, cybersecurity fundamentals, and hands-on lab experience.",
+    highlights: [
+      "Network configuration and troubleshooting",
+      "Security protocols and encryption",
+      "System administration (Windows/Linux)",
+      "Ethical hacking and penetration testing",
     ],
     skills: [
-      "Operations",
-      "Quality Control",
-      "Inventory Management",
-      "Process Optimization",
+      "Network Administration",
+      "System Security",
+      "Penetration Testing",
+      "Linux/Windows",
     ],
-    achievements: [
-      { metric: "150+", label: "Meals per shift" },
-      { metric: "15%", label: "Waste reduction" },
-      { metric: "100%", label: "Hygiene compliance" },
-    ],
+    logoPlaceholder: "🎓",
   },
   {
-    org: "Flexasoft",
-    role: "Video Game Tester",
-    time: "Jul 2016 – May 2017",
-    location: "Redmond, USA",
-    type: "Quality Assurance",
+    school: "DePaul University",
+    degree: "BA Digital Cinema",
+    specialization: "Minor Game Production",
+    time: "2010 – 2017",
+    location: "Chicago, USA",
+    status: "Completed",
+    gpa: null,
     description:
-      "Quality assurance testing for video game development with focus on bug identification and documentation.",
-    bullets: [
-      "Executed multiple structured test cases daily to identify and document gameplay bugs, UI/UX issues, and performance defects.",
-      "Logged and tracked software bugs in a defect management system, improving debugging speed and resolution accuracy.",
-      "Verified bug fixes to ensure correct implementation and functionality in game updates.",
-      "Followed detailed test scripts to assess game stability, performance, and compliance with QA standards.",
-      "Provided actionable feedback on gameplay mechanics, contributing to improved user experience prior to final release.",
+      "Creative and technical program combining storytelling, visual production, and interactive media development.",
+    highlights: [
+      "Digital media production and post-production",
+      "Interactive storytelling and game design",
+      "Project management for creative teams",
+      "Technical problem-solving in production environments",
     ],
-    skills: ["Quality Assurance", "Bug Testing", "Documentation", "Team Collaboration"],
-    achievements: [
-      { metric: "30+", label: "Test cases per day" },
-      { metric: "50+", label: "Bugs documented" },
-      { metric: "5", label: "Team members" },
+    skills: [
+      "Creative Problem Solving",
+      "Project Management",
+      "Technical Production",
+      "Team Collaboration",
     ],
+    logoPlaceholder: "🎬",
   },
 ];
 
 /* -------------------- card -------------------- */
-function ExperienceCard({ experience }) {
+function EducationCard({ education }) {
+  const isCurrentlyEnrolled = education.status === "In Progress";
+
   return (
-    <Card className="h-full">
+    <Card className="group hover:shadow-xl transition-all duration-300">
       <CardHeader>
-        <div className="flex items-start justify-between gap-4 mb-3">
+        <div className="flex items-start gap-4 mb-3">
+          {/* Logo placeholder */}
+          <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 flex items-center justify-center text-2xl flex-shrink-0">
+            {education.logoPlaceholder}
+          </div>
+
           <div className="flex-1 min-w-0">
-            <CardTitle className="mb-1">{experience.role}</CardTitle>
-            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-300 font-medium mb-2">
-              <span className="truncate">{experience.org}</span>
+            <CardTitle className="mb-1">{education.school}</CardTitle>
+
+            <div className="text-indigo-600 dark:text-indigo-300 font-medium mb-2">
+              {education.degree}
+              {education.specialization && (
+                <span className="text-neutral-700 dark:text-white/85 font-normal">
+                  {" • "}
+                  {education.specialization}
+                </span>
+              )}
             </div>
+
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-white/80">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" aria-hidden="true" />
-                <span>{experience.time}</span>
+                <span>{education.time}</span>
               </div>
               <div className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" aria-hidden="true" />
-                <span>{experience.location}</span>
+                <span>{education.location}</span>
               </div>
             </div>
+
+            {/* Status badges */}
+            <div className="mt-2 flex items-center gap-2 flex-wrap">
+              <Badge variant={isCurrentlyEnrolled ? "warning" : "success"}>
+                {education.status}
+              </Badge>
+              {education.gpa && (
+                <Badge variant="success">
+                  <Star className="w-3 h-3 mr-1" />
+                  {education.gpa}
+                </Badge>
+              )}
+              {education.honors && (
+                <Badge variant="honor">
+                  <Award className="w-3 h-3 mr-1" />
+                  {education.honors}
+                </Badge>
+              )}
+            </div>
           </div>
-          <Badge>{experience.type}</Badge>
         </div>
 
-        <CardDescription>{experience.description}</CardDescription>
+        <CardDescription>{education.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
-        {/* Achievements — now high-contrast in dark mode */}
-        <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6 p-4 rounded-xl border shadow-inner
-                         bg-white/75 text-neutral-900 border-neutral-200/70
-                         dark:bg-black/45 dark:text-white dark:border-white/15">
-          {experience.achievements.map((a) => (
-            <div key={a.label} className="text-center">
-              <div className="text-lg md:text-xl font-bold text-indigo-700 dark:text-indigo-300">
-                {a.metric}
-              </div>
-              <div className="text-[11px] md:text-xs opacity-90">
-                {a.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Responsibilities */}
+        {/* Key Learning Areas */}
         <div className="mb-6">
-          <h4 className="font-medium mb-3 text-sm text-neutral-800 dark:text-white/90">
-            Key Responsibilities & Impact
+          <h4 className="font-medium mb-3 text-sm text-neutral-800 dark:text-white/90 flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            Key Learning Areas
           </h4>
           <ul className="space-y-2.5">
-            {experience.bullets.map((bullet, i) => (
+            {education.highlights.map((h) => (
               <li
-                key={`${experience.org}-b-${i}`}
+                key={h}
                 className="flex items-start gap-2 text-[0.95rem] leading-relaxed"
               >
                 <TrendingUp
-                  className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0"
                   aria-hidden="true"
                 />
-                <span className="text-neutral-800 dark:text-white/90">
-                  {bullet}
-                </span>
+                <span className="text-neutral-800 dark:text-white/90">{h}</span>
               </li>
             ))}
           </ul>
@@ -270,35 +268,62 @@ function ExperienceCard({ experience }) {
         {/* Skills */}
         <div>
           <h4 className="font-medium mb-2 text-sm text-neutral-800 dark:text-white/90">
-            Skills Applied
+            Skills Developed
           </h4>
           <div className="flex flex-wrap gap-2">
-            {experience.skills.map((skill) => (
-              <Badge key={`${experience.org}-s-${skill}`}>{skill}</Badge>
+            {education.skills.map((skill) => (
+              <Badge key={`${education.school}-s-${skill}`}>{skill}</Badge>
             ))}
           </div>
         </div>
+
+        {/* Progress for current studies */}
+        {isCurrentlyEnrolled && (
+          <div className="mt-6 pt-4 border-t border-white/10">
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="text-neutral-700 dark:text-white/85">
+                Progress
+              </span>
+              <span className="text-indigo-700 dark:text-indigo-300 font-medium">
+                ~60%
+              </span>
+            </div>
+            <div className="w-full bg-neutral-200 dark:bg-neutral-700/70 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-700"
+                style={{ width: "60%" }}
+              />
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 }
 
 /* -------------------- page -------------------- */
-export default function Experience() {
+export default function Education() {
+  const completedDegrees = EDUCATION.filter(
+    (ed) => ed.status === "Completed"
+  ).length;
+  const currentlyEnrolled = EDUCATION.filter(
+    (ed) => ed.status === "In Progress"
+  ).length;
+
   return (
     <main className={container}>
       <Section
-        title="Experience"
-        subtitle="Professional journey with measurable impact and continuous growth."
+        title="Education"
+        subtitle="Academic foundation building technical expertise and analytical thinking."
       >
-        {/* Timeline */}
-        <div className="space-y-8">
-          {EXPERIENCE.map((exp, idx) => (
-            <div key={exp.org} className="relative">
-              {/* vertical line */}
-              {idx < EXPERIENCE.length - 1 && (
+        {/* Timeline (matches Experience.jsx alignment) */}
+        <div className="space-y-8 mb-16">
+          {EDUCATION.map((ed, idx) => (
+            <div key={ed.school} className="relative">
+              {/* vertical line aligned to header baseline */}
+              {idx < EDUCATION.length - 1 && (
                 <div
-                  className="absolute left-6 top-16 w-px h-full opacity-40"
+                  className="absolute left-6 top-16 w-px h-[calc(100%-2rem)] opacity-40"
                   style={{
                     background:
                       "linear-gradient(to bottom, rgba(99,102,241,0.45), transparent)",
@@ -312,28 +337,36 @@ export default function Experience() {
 
               {/* card */}
               <div className="ml-12">
-                <ExperienceCard experience={exp} />
+                <EducationCard education={ed} />
               </div>
             </div>
           ))}
         </div>
 
-        {/* Summary cards */}
-        <div className="mt-14 grid sm:grid-cols-3 gap-4 md:gap-6">
+        {/* Summary cards (match Experience.jsx styling) */}
+        <div className="grid sm:grid-cols-4 gap-4 md:gap-6">
           <Card className="p-6 text-center">
             <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
-              16+
+              {completedDegrees + currentlyEnrolled}
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
-              Career milestones
+              Degrees pursued
             </div>
           </Card>
           <Card className="p-6 text-center">
             <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
-              13k+
+              4.0
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
-              People impacted
+              GPA achieved
+            </div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
+              {currentlyEnrolled}
+            </div>
+            <div className="text-sm text-neutral-700 dark:text-white/85">
+              Currently enrolled
             </div>
           </Card>
           <Card className="p-6 text-center">
@@ -341,7 +374,7 @@ export default function Experience() {
               2
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
-              Countries worked in
+              Countries studied
             </div>
           </Card>
         </div>
