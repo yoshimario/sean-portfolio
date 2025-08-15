@@ -107,7 +107,7 @@ export default function Header({ dark = true, setDark = () => {} }) {
 
           {/* Resume */}
           <a
-            href="/src/docs/Sean-KipinaCV.pdf"
+            href="/public/docs/Sean-KipinaCV.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className={cx(

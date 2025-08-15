@@ -193,7 +193,7 @@ const PERSON = {
   location: "Vantaa, Finland",
 };
 
-// 🔑 Replace this with your real Web3Forms access key (move to env for production)
+// 🔑 Replace with your real Web3Forms access key (move to env for production)
 const ACCESS_KEY = "0020de78-e8ec-4ff5-9239-9caa75008fc5";
 
 export default function Contact() {
@@ -413,3 +413,4 @@ export default function Contact() {
     </main>
   );
 }
+np
