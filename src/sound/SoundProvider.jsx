@@ -7,34 +7,35 @@ import React, {
   useRef,
   useState,
 } from "react";
+import PropTypes from "prop-types";
 
 const SoundCtx = createContext(null);
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSound = () => useContext(SoundCtx);
 
-/**
- * SoundProvider
- * - Keeps one looping <audio> alive across routes
- * - Starts after the first user gesture (browser policy)
- * - Persists consent so it auto-resumes next visits
- */
 export default function SoundProvider({
-  src = "/audio/forest-ambience.mp3", // put your file in /public/audio/
+  src = "/audio/forest-ambience.mp3",
   defaultVolume = 0.35,
   storageKey = "sound:consented",
   children,
 }) {
   const audioRef = useRef(null);
+  const fadeRafRef = useRef(null);
+
   const [consented, setConsented] = useState(() => {
     try {
       return localStorage.getItem(storageKey) === "1";
-    } catch {
+    } catch (e) {
+      if (import.meta.env?.DEV) {
+        console.debug("[SoundProvider] localStorage get failed:", e);
+      }
       return false;
     }
   });
   const [enabled, setEnabled] = useState(false);
   const [volume, setVolume] = useState(defaultVolume);
 
-  // Create audio once
   useEffect(() => {
     const el = new Audio(src);
     el.loop = true;
@@ -44,30 +45,45 @@ export default function SoundProvider({
     return () => {
       try {
         el.pause();
-      } catch {}
+      } catch (e) {
+        if (import.meta.env?.DEV) {
+          console.debug("[SoundProvider] pause on unmount failed:", e);
+        }
+      }
       audioRef.current = null;
     };
   }, [src]);
 
-  // Save consent
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, consented ? "1" : "0");
-    } catch {}
+    } catch (e) {
+      if (import.meta.env?.DEV) {
+        console.debug("[SoundProvider] localStorage set failed:", e);
+      }
+    }
   }, [consented, storageKey]);
 
-  // Smooth fade helper
   const fadeTo = (target, ms = 600) => {
     const el = audioRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
+    if (fadeRafRef.current) {
+      cancelAnimationFrame(fadeRafRef.current);
+    }
     const start = el.volume;
     const t0 = performance.now();
     const tick = (now) => {
       const t = Math.min(1, (now - t0) / ms);
       el.volume = start + (target - start) * t;
-      if (t < 1) requestAnimationFrame(tick);
+      if (t < 1) {
+        fadeRafRef.current = requestAnimationFrame(tick);
+      } else {
+        fadeRafRef.current = null;
+      }
     };
-    requestAnimationFrame(tick);
+    fadeRafRef.current = requestAnimationFrame(tick);
   };
 
   const api = useMemo(
@@ -79,67 +95,116 @@ export default function SoundProvider({
       setVolume(v) {
         setVolume(v);
         const el = audioRef.current;
-        if (el) el.volume = v;
-      },
-      async enable() {
-        const el = audioRef.current;
-        if (!el) return;
-        try {
-          if (el.paused) await el.play();
-          setEnabled(true);
-          fadeTo(volume, 800);
-        } catch (e) {
-          // Likely called without a user gesture — try again from a click handler.
-          console.debug("[Sound] enable blocked:", e);
+        if (el) {
+          el.volume = v;
         }
       },
-      async disable() {
+      enable() {
         const el = audioRef.current;
-        if (!el) return;
+        if (!el) {
+          return Promise.resolve();
+        }
+        const playPromise = el.play();
+        if (playPromise) {
+          return playPromise
+            .then(() => {
+              setEnabled(true);
+              fadeTo(volume, 800);
+            })
+            .catch((e) => {
+              if (import.meta.env?.DEV) {
+                console.debug("[SoundProvider] enable blocked:", e);
+              }
+            });
+        }
+        setEnabled(true);
+        fadeTo(volume, 800);
+        return Promise.resolve();
+      },
+      disable() {
+        const el = audioRef.current;
+        if (!el) {
+          return Promise.resolve();
+        }
         fadeTo(0, 400);
-        setTimeout(() => {
-          try {
-            el.pause();
-          } catch {}
-          setEnabled(false);
-        }, 420);
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            try {
+              el.pause();
+            } catch (e) {
+              if (import.meta.env?.DEV) {
+                console.debug("[SoundProvider] pause on disable failed:", e);
+              }
+            }
+            setEnabled(false);
+            resolve();
+          }, 420);
+        });
       },
     }),
     [enabled, volume, consented]
   );
 
-  // If consented, auto-enable after the first user gesture on this visit
   useEffect(() => {
-    if (!consented) return;
-    const onFirstGesture = async () => {
-      await api.enable();
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("keydown", onFirstGesture);
+    if (!consented) {
+      return;
+    }
+    const onFirstGesture = () => {
+      api.enable();
+      ["pointerdown", "keydown", "click", "touchstart"].forEach((ev) =>
+        window.removeEventListener(ev, onFirstGesture)
+      );
     };
-    window.addEventListener("pointerdown", onFirstGesture, { once: true });
-    window.addEventListener("keydown", onFirstGesture, { once: true });
+    ["pointerdown", "keydown", "click", "touchstart"].forEach((ev) =>
+      window.addEventListener(ev, onFirstGesture, { once: true })
+    );
     return () => {
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("keydown", onFirstGesture);
+      ["pointerdown", "keydown", "click", "touchstart"].forEach((ev) =>
+        window.removeEventListener(ev, onFirstGesture)
+      );
     };
   }, [consented, api]);
 
-  // Optional: pause when tab hidden, resume when visible
   useEffect(() => {
     const onVis = () => {
       const el = audioRef.current;
-      if (!el) return;
+      if (!el) {
+        return;
+      }
       if (document.hidden) {
         try {
           el.pause();
-        } catch {}
+        } catch (e) {
+          if (import.meta.env?.DEV) {
+            console.debug("[SoundProvider] pause on hidden failed:", e);
+          }
+        }
       } else if (enabled) {
-        el.play().catch(() => {});
+        el.play().catch((e) => {
+          if (import.meta.env?.DEV) {
+            console.debug("[SoundProvider] resume play failed:", e);
+          }
+        });
       }
     };
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [enabled]);
 
+  useEffect(() => {
+    return () => {
+      if (fadeRafRef.current) {
+        cancelAnimationFrame(fadeRafRef.current);
+      }
+    };
+  }, []);
+
   return <SoundCtx.Provider value={api}>{children}</SoundCtx.Provider>;
 }
+
+SoundProvider.propTypes = {
+  src: PropTypes.string,
+  defaultVolume: PropTypes.number,
+  storageKey: PropTypes.string,
+  children: PropTypes.node,
+};

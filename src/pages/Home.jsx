@@ -44,7 +44,8 @@ function Card({ className = "", children }) {
   return (
     <div
       className={[
-        "glass rounded-2xl shadow-lg border dark:bg-white/5 bg-neutral-100/70 dark:border-white/10 border-neutral-200",
+        // keep your glass look, bump dark opacity for readability
+        "glass rounded-2xl shadow-lg border dark:bg-white/[0.06] bg-neutral-100/70 dark:border-white/10 border-neutral-200",
         className,
       ].join(" ")}
     >
@@ -58,11 +59,11 @@ function Section({ id, title, subtitle, children }) {
   return (
     <section id={id} className="scroll-mt-[72px] pt-8 pb-8">
       <div className="mb-3">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white drop-shadow">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white text-enhanced">
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-1 text-sm md:text-base text-neutral-600 dark:text-white/80 max-w-2xl">
+          <p className="mt-1 text-sm md:text-base text-neutral-700 dark:text-white/85 text-enhanced max-w-2xl">
             {subtitle}
           </p>
         )}
@@ -101,19 +102,28 @@ export default function Home() {
         >
           <div className="grid md:grid-cols-2 items-center w-full gap-6 md:gap-8">
             {/* Left: copy & CTAs */}
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-white/80">
+            <div
+              className={
+                // subtle readability surface behind text in dark mode
+                "space-y-4 rounded-2xl p-4 md:p-5 dark:bg-black/35 bg-white/0 backdrop-blur-[2px]"
+              }
+            >
+              <div className="inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-white/80 text-enhanced">
                 <MapPin className="w-4 h-4" /> {PERSON.location}
               </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-neutral-900 dark:text-white drop-shadow">
+
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-neutral-900 dark:text-white text-enhanced drop-shadow">
                 {PERSON.name}
               </h1>
-              <p className="text-xl md:text-2xl text-indigo-700 dark:text-indigo-200">
+
+              <p className="text-xl md:text-2xl text-indigo-700 dark:text-indigo-200 text-enhanced">
                 {PERSON.tagline}
               </p>
-              <p className="text-neutral-700 dark:text-white/85 max-w-lg leading-relaxed">
+
+              <p className="text-neutral-800 dark:text-white/85 max-w-lg leading-relaxed text-enhanced">
                 {PERSON.blurb}
               </p>
+
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button asChild size="lg" className="btn-enhanced">
                   <Link to="/projects" className="flex items-center gap-2">
@@ -227,8 +237,10 @@ export default function Home() {
         >
           <div className="grid sm:grid-cols-2 gap-4">
             <Card className="p-5">
-              <h3 className="font-semibold mb-3">What I'm into</h3>
-              <ul className="list-disc pl-5 space-y-1.5 text-sm text-neutral-700 dark:text-white/80">
+              <h3 className="font-semibold mb-3 text-enhanced">
+                What I'm into
+              </h3>
+              <ul className="list-disc pl-5 space-y-1.5 text-sm text-neutral-800 dark:text-white/85 text-enhanced">
                 <li>
                   Network security, vulnerability management, and
                   troubleshooting.
@@ -241,8 +253,10 @@ export default function Home() {
               </ul>
             </Card>
             <Card className="p-5">
-              <h3 className="font-semibold mb-3">Current focus</h3>
-              <div className="text-sm text-neutral-700 dark:text-white/80 space-y-1.5">
+              <h3 className="font-semibold mb-3 text-enhanced">
+                Current focus
+              </h3>
+              <div className="text-sm text-neutral-800 dark:text-white/85 space-y-1.5 text-enhanced">
                 <p>
                   🎓 Finishing BBA in Business IT & Cyber Security at Laurea UAS
                 </p>
@@ -259,27 +273,43 @@ export default function Home() {
         <Section id="stats" title="At a glance">
           <div className="grid sm:grid-cols-3 gap-4">
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
                 3+
               </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
+              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
                 Years in tech
               </div>
             </Card>
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                4.0
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
+                16+
               </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
-                GPA in Cybersecurity
+              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
+                Years in customer service roles
               </div>
             </Card>
             <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
+                4.75
+              </div>
+              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
+                GPA in current Business IT & Cyber Security program
+              </div>
+            </Card>
+            <Card className="p-5 text-center">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
                 13k+
               </div>
-              <div className="text-sm text-neutral-600 dark:text-white/70">
+              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
                 Event attendees managed
+              </div>
+            </Card>
+            <Card className="p-5 text-center">
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
+                4.75
+              </div>
+              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
+                GPA in current Business IT & Cyber Security program
               </div>
             </Card>
           </div>
@@ -289,8 +319,10 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 gap-4">
             <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
-                <h3 className="font-semibold text-lg">Projects</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">
+                <h3 className="font-semibold text-lg text-enhanced">
+                  Projects
+                </h3>
+                <p className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
                   Labs, builds, and experiments.
                 </p>
               </div>
@@ -303,8 +335,10 @@ export default function Home() {
             </Card>
             <Card className="p-5 flex items-center justify-between group hover:bg-white/80 dark:hover:bg-white/15 transition-colors">
               <div>
-                <h3 className="font-semibold text-lg">Photography</h3>
-                <p className="text-sm text-neutral-600 dark:text-white/70">
+                <h3 className="font-semibold text-lg text-enhanced">
+                  Photography
+                </h3>
+                <p className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
                   Selected shots — water, urban, and climbs.
                 </p>
               </div>

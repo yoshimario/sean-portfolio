@@ -1,4 +1,6 @@
+// src/components/Header.jsx
 import React from "react";
+import PropTypes from "prop-types";
 import { NavLink, Link } from "react-router-dom";
 import { Sun, Moon, ExternalLink } from "lucide-react";
 import { useSound } from "../sound/SoundProvider.jsx";
@@ -19,10 +21,13 @@ export default function Header({ dark = true, setDark = () => {} }) {
     "px-3 py-2 rounded-xl text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400";
 
   const sound = useSound();
-  const toggleSound = async () => {
-    if (sound.isEnabled) return sound.disable();
-    sound.setConsented(true); // remember for future visits
-    await sound.enable(); // fades in, needs a click
+  const toggleSound = () => {
+    if (sound.isEnabled) {
+      sound.disable();
+    } else {
+      sound.setConsented(true);
+      sound.enable();
+    }
   };
 
   return (
@@ -179,3 +184,8 @@ export default function Header({ dark = true, setDark = () => {} }) {
     </header>
   );
 }
+
+Header.propTypes = {
+  dark: PropTypes.bool,
+  setDark: PropTypes.func,
+};

@@ -1,39 +1,21 @@
-// src/pages/Writing.jsx
-import React, { useState } from "react";
-import placementPDF from "/src/docs/Kipinä_Sean_Placement1_Report.pdf";
+// src/pages/Experience.jsx
+import React from "react";
+import { Calendar, MapPin, TrendingUp } from "lucide-react";
 
-import {
-  Calendar,
-  Clock,
-  ArrowRight,
-  BookOpen,
-  Tag,
-  ExternalLink,
-} from "lucide-react";
-
-/**
- * BEFORE USING:
- * 1) Put your file here (recommended to avoid special characters):
- *    public/docs/Sean_Kipina_Placement1_Report.docx
- *    (or export to PDF for nicer in-browser viewing:
- *    public/docs/Sean_Kipina_Placement1_Report.pdf)
- *
- * 2) If you keep .docx, most browsers will download it. If you export to PDF,
- *    it will open in a tab. Update WRITING[0].href accordingly.
- */
-
-/* ------------ tiny helpers + UI ------------ */
+/* -------------------- helpers & layout -------------------- */
 const cx = (...c) => c.filter(Boolean).join(" ");
 const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
-const section = "py-20";
+const section = "py-16 md:py-20";
 
+/* -------------------- UI primitives (readability tuned) -------------------- */
 const Card = ({ className = "", children }) => (
   <div
     className={cx(
-      "rounded-2xl border backdrop-blur-xl shadow-lg overflow-hidden group",
-      "border-neutral-200/60 bg-white/70 text-neutral-900",
-      "dark:border-white/15 dark:bg-white/10 dark:text-white",
-      "hover:shadow-xl transition-all duration-300",
+      "rounded-2xl border shadow-lg backdrop-blur-xl transition-colors",
+      // Light
+      "border-neutral-200/70 bg-white/80 text-neutral-900",
+      // Dark — higher opacity + stronger border for legibility
+      "dark:border-white/20 dark:bg-[rgba(10,15,30,0.78)] dark:text-white",
       className
     )}
   >
@@ -42,17 +24,18 @@ const Card = ({ className = "", children }) => (
 );
 
 const CardHeader = ({ children, className = "" }) => (
-  <div className={cx("p-6", className)}>{children}</div>
+  <div className={cx("p-6 pb-4 md:p-7 md:pb-4", className)}>{children}</div>
 );
 
 const CardContent = ({ children, className = "" }) => (
-  <div className={cx("px-6 pb-6", className)}>{children}</div>
+  <div className={cx("px-6 pb-6 md:px-7 md:pb-7", className)}>{children}</div>
 );
 
 const CardTitle = ({ children, className = "" }) => (
   <h3
     className={cx(
-      "font-semibold tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors",
+      "font-semibold tracking-tight text-neutral-900 dark:text-white/95",
+      "text-lg md:text-xl leading-tight",
       className
     )}
   >
@@ -61,25 +44,35 @@ const CardTitle = ({ children, className = "" }) => (
 );
 
 const CardDescription = ({ children, className = "" }) => (
-  <p className={cx("text-sm text-neutral-600 dark:text-white/70", className)}>
+  <p
+    className={cx(
+      "text-sm md:text-[0.95rem] leading-relaxed",
+      "text-neutral-700 dark:text-white/90",
+      className
+    )}
+  >
     {children}
   </p>
 );
 
-const Badge = ({ children, variant = "default" }) => {
+const Badge = ({ children, variant = "default", className = "" }) => {
   const variants = {
     default:
-      "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
-    category:
-      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-    readTime:
-      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+      "bg-indigo-100 text-indigo-700 border border-indigo-200/70 " +
+      "dark:bg-indigo-950/60 dark:text-indigo-200 dark:border-indigo-400/25",
+    success:
+      "bg-green-100 text-green-700 border border-green-200/70 " +
+      "dark:bg-green-950/60 dark:text-green-200 dark:border-green-400/25",
+    warning:
+      "bg-yellow-100 text-yellow-700 border border-yellow-200/70 " +
+      "dark:bg-yellow-950/60 dark:text-yellow-200 dark:border-yellow-400/25",
   };
   return (
     <span
       className={cx(
-        "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium",
-        variants[variant]
+        "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium backdrop-blur",
+        variants[variant],
+        className
       )}
     >
       {children}
@@ -90,12 +83,12 @@ const Badge = ({ children, variant = "default" }) => {
 function Section({ title, subtitle, children }) {
   return (
     <section className={section}>
-      <div className="mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white drop-shadow">
+      <div className="mb-8 md:mb-10">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white/95 drop-shadow">
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-2 text-neutral-600 dark:text-white/80 max-w-2xl">
+          <p className="mt-2 text-neutral-700 dark:text-white/85 max-w-2xl">
             {subtitle}
           </p>
         )}
@@ -105,173 +98,267 @@ function Section({ title, subtitle, children }) {
   );
 }
 
-/* ------------ only your provided article ------------ */
-const WRITING = [
+/* -------------------- data -------------------- */
+const EXPERIENCE = [
   {
-    title: "Placement 1 — Hublet Oy (Learning Assignment)",
-    href: placementPDF, // will open directly in most browsers
-    date: "2025-01-15",
-    category: "Work & Reports",
-    readTime: "10–15 min (report)",
-    excerpt:
-      "A practical placement report covering IT support, QA testing in a SaaS environment, documentation improvements, and reflections on professional growth.",
-    tags: ["Internship", "Documentation", "SaaS", "Support"],
-    featured: true,
+    org: "Hublet Oy",
+    role: "Hublet Security Expert – Trainee",
+    time: "Mar 2025 – Aug 2025",
+    location: "Helsinki, Finland",
+    type: "Cybersecurity",
+    description:
+      "Security trainee focused on vulnerability assessment, secure update testing, documentation, and security enablement across teams and customers.",
+    bullets: [
+      "Conducted vulnerability assessments of the Hublet Solution; identified risks and recommended mitigation strategies.",
+      "Tested software updates for reliability and stability to support a secure release process.",
+      "Created, updated, and maintained internal and customer-facing security documentation (Help Center, FAQs).",
+      "Contributed to security awareness materials for customer onboarding and internal staff training.",
+      "Improved tender documentation and IT/customer support resources with security inputs.",
+      "Collaborated with supervisors and cross‑functional teams to address issues and enhance overall security posture.",
+      "Applied theoretical cybersecurity knowledge to practical tasks with strong attention to detail and problem-solving.",
+    ],
+    skills: [
+      "Vulnerability Assessment",
+      "Application Security",
+      "Secure SDLC",
+      "Risk Analysis",
+      "Technical Writing",
+      "Security Awareness",
+      "Cross‑functional Collaboration",
+    ],
+    achievements: [
+      { metric: "Assessments", label: "Security posture reviews completed" },
+      { metric: "Docs", label: "Security guides & FAQs maintained" },
+      { metric: "Releases", label: "Updates validated for stability" },
+    ],
+  },
+  {
+    org: "Slush",
+    role: "Customer Success Team (Offline) Group Lead",
+    time: "Sep 2023 – Dec 2023",
+    location: "Helsinki, Finland",
+    type: "Event Management",
+    description:
+      "Led customer success operations for Europe's leading startup event with 13,000+ attendees.",
+    bullets: [
+      "Led and supervised a team of 10+ volunteers, providing training, guidance, and performance oversight to ensure smooth event operations for a large-scale international audience.",
+      "Streamlined and automated workflow processes, improving response times and overall team efficiency.",
+      "Developed and implemented a volunteer onboarding and training program, enhancing role readiness and operational consistency.",
+      "Coordinated and managed event logistics, ensuring the timely completion of scheduled activities.",
+      "Facilitated cross-team communication and task coordination, enabling efficient collaboration between volunteers, staff, and event stakeholders.",
+    ],
+    skills: [
+      "Team Leadership",
+      "Process Automation",
+      "Event Logistics",
+      "IT Support",
+    ],
+    achievements: [
+      { metric: "13,000+", label: "Attendees supported" },
+      { metric: "35%", label: "Response time improvement" },
+      { metric: "98%", label: "On-time completion rate" },
+    ],
+  },
+  {
+    org: "McDonald's",
+    role: "Food Service Worker",
+    time: "Nov 2022 – May 2023",
+    location: "Oulu, Finland",
+    type: "Operations",
+    description:
+      "High-volume food service operations with focus on efficiency and quality control.",
+    bullets: [
+      "Prepared 150+ meals/shift; reduced waste by ~15% via inventory & portion control.",
+      "Ensured 100% hygiene compliance; maintained equipment to reduce downtime by ~25%.",
+    ],
+    skills: [
+      "Operations",
+      "Quality Control",
+      "Inventory Management",
+      "Process Optimization",
+    ],
+    achievements: [
+      { metric: "150+", label: "Meals per shift" },
+      { metric: "15%", label: "Waste reduction" },
+      { metric: "100%", label: "Hygiene compliance" },
+    ],
+  },
+  {
+    org: "Flexasoft",
+    role: "Video Game Tester",
+    time: "Jul 2016 – May 2017",
+    location: "Redmond, USA",
+    type: "Quality Assurance",
+    description:
+      "Quality assurance testing for video game development with focus on bug identification and documentation.",
+    bullets: [
+      "Executed multiple structured test cases daily to identify and document gameplay bugs, UI/UX issues, and performance defects.",
+      "Logged and tracked software bugs in a defect management system, improving debugging speed and resolution accuracy.",
+      "Verified bug fixes to ensure correct implementation and functionality in game updates.",
+      "Followed detailed test scripts to assess game stability, performance, and compliance with QA standards.",
+      "Provided actionable feedback on gameplay mechanics, contributing to improved user experience prior to final release.",
+    ],
+    skills: [
+      "Quality Assurance",
+      "Bug Testing",
+      "Documentation",
+      "Team Collaboration",
+    ],
+    achievements: [
+      { metric: "30+", label: "Test cases per day" },
+      { metric: "50+", label: "Bugs documented" },
+      { metric: "5", label: "Team members" },
+    ],
   },
 ];
 
-/* ------------ categories (visible but some will be empty for now) ------------ */
-const CATEGORIES = [
-  "All",
-  "Work & Reports",
-  "Society & Perspective",
-  "Cycling & Gear",
-  "Cybersecurity",
-  "Career & Development",
-];
-
-function WritingCard({ article, featured = false }) {
-  const formattedDate = article.date
-    ? new Date(article.date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-
+/* -------------------- card -------------------- */
+function ExperienceCard({ experience }) {
   return (
-    <Card className={cx("cursor-pointer h-full", featured && "md:col-span-2")}>
-      <a
-        href={article.href}
-        className="block h-full"
-        target="_blank"
-        rel="noreferrer"
-      >
-        {featured && (
-          <div className="h-48 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 flex items-center justify-center">
-            <div className="text-center text-white/70">
-              <BookOpen className="w-12 h-12 mx-auto mb-2" />
-              <div className="text-sm font-medium">Featured</div>
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4 mb-3">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="mb-1">{experience.role}</CardTitle>
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-300 font-medium mb-2">
+              <span className="truncate">{experience.org}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-white/80">
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <span>{experience.time}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MapPin className="w-4 h-4" aria-hidden="true" />
+                <span>{experience.location}</span>
+              </div>
             </div>
           </div>
-        )}
+          <Badge>{experience.type}</Badge>
+        </div>
 
-        <CardHeader className={cx(featured && "pb-4")}>
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-white/60">
-              {formattedDate && <Calendar className="w-4 h-4" />}
-              {formattedDate}
+        <CardDescription>{experience.description}</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        {/* Achievements — DARKER chips row */}
+        <div
+          className={cx(
+            "grid grid-cols-3 gap-3 md:gap-4 mb-6 p-4 rounded-xl border",
+            "bg-white/70 text-neutral-900 border-white/60", // light
+            "dark:bg-[rgba(255,255,255,0.06)] dark:text-white dark:border-white/15" // dark
+          )}
+        >
+          {experience.achievements.map((a) => (
+            <div key={a.label} className="text-center">
+              <div className="text-lg md:text-xl font-bold text-indigo-700 dark:text-indigo-300">
+                {a.metric}
+              </div>
+              <div className="text-[11px] md:text-xs opacity-85">{a.label}</div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="category">
-                <Tag className="w-3 h-3 mr-1" />
-                {article.category}
-              </Badge>
-              {article.readTime && (
-                <Badge variant="readTime">
-                  <Clock className="w-3 h-3 mr-1" />
-                  {article.readTime}
-                </Badge>
-              )}
-            </div>
-          </div>
+          ))}
+        </div>
 
-          <CardTitle
-            className={cx(
-              "leading-tight mb-2",
-              featured ? "text-xl" : "text-lg"
-            )}
-          >
-            {article.title}
-            <ArrowRight className="w-4 h-4 inline-block ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-          </CardTitle>
+        {/* Responsibilities */}
+        <div className="mb-6">
+          <h4 className="font-medium mb-3 text-sm text-neutral-800 dark:text-white/90">
+            Key Responsibilities & Impact
+          </h4>
+          <ul className="space-y-2.5">
+            {experience.bullets.map((bullet, i) => (
+              <li
+                key={`${experience.org}-b-${i}`}
+                className="flex items-start gap-2 text-[0.95rem] leading-relaxed"
+              >
+                <TrendingUp
+                  className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="text-neutral-800 dark:text-white/90">
+                  {bullet}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          <CardDescription className="leading-relaxed">
-            {article.excerpt}
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
+        {/* Skills */}
+        <div>
+          <h4 className="font-medium mb-2 text-sm text-neutral-800 dark:text-white/90">
+            Skills Applied
+          </h4>
           <div className="flex flex-wrap gap-2">
-            {article.tags?.map((tag) => (
-              <Badge key={tag} variant="default">
-                {tag}
-              </Badge>
+            {experience.skills.map((skill) => (
+              <Badge key={`${experience.org}-s-${skill}`}>{skill}</Badge>
             ))}
           </div>
-        </CardContent>
-      </a>
+        </div>
+      </CardContent>
     </Card>
   );
 }
 
-export default function Writing() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  const filtered =
-    selectedCategory === "All"
-      ? WRITING
-      : WRITING.filter((a) => a.category === selectedCategory);
-
+/* -------------------- page -------------------- */
+export default function Experience() {
   return (
     <main className={container}>
       <Section
-        title="Selected Writing"
-        subtitle="Thoughts on technology, security, and the intersection of digital life with human experience."
+        title="Experience"
+        subtitle="Professional journey with measurable impact and continuous growth."
       >
-        {/* Category filter */}
-        <div className="mb-8 flex justify-center">
-          <div className="flex gap-2 p-1 rounded-2xl bg-white/50 dark:bg-white/10 backdrop-blur flex-wrap">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cx(
-                  "px-4 py-2 rounded-xl text-sm font-medium transition-colors",
-                  selectedCategory === cat
-                    ? "bg-indigo-600/90 text-white"
-                    : "text-neutral-600 dark:text-white/70 hover:bg-white/50 dark:hover:bg-white/10"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        {/* Timeline */}
+        <div className="space-y-8">
+          {EXPERIENCE.map((exp, idx) => (
+            <div key={exp.org} className="relative">
+              {/* vertical line */}
+              {idx < EXPERIENCE.length - 1 && (
+                <div
+                  className="absolute left-6 top-16 w-px h-full opacity-50"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, rgba(99,102,241,0.55), transparent)",
+                  }}
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* dot */}
+              <div className="absolute left-4 top-8 w-4 h-4 rounded-full bg-indigo-500 ring-4 ring-[#0b1022] dark:ring-[#0b1022] shadow-lg" />
+
+              {/* card */}
+              <div className="ml-12">
+                <ExperienceCard experience={exp} />
+              </div>
+            </div>
+          ))}
         </div>
 
-        {filtered.length === 0 ? (
-          <div className="text-center py-12">
-            <BookOpen className="w-16 h-16 mx-auto mb-4 text-neutral-400 dark:text-white/40" />
-            <p className="text-neutral-600 dark:text-white/70 mb-2">
-              No articles found in this category.
-            </p>
-            <p className="text-sm text-neutral-500 dark:text-white/50">
-              More coming soon.
-            </p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((article) => (
-              <WritingCard
-                key={article.title}
-                article={article}
-                featured={article.featured}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* LinkedIn link */}
-        <div className="mt-16 text-center">
-          <a
-            href="https://www.linkedin.com/in/seankipina/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600/90 text-white rounded-xl hover:bg-indigo-500/90 transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Connect on LinkedIn
-          </a>
+        {/* Summary cards */}
+        <div className="mt-14 grid sm:grid-cols-3 gap-4 md:gap-6">
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
+              16+
+            </div>
+            <div className="text-sm text-neutral-700 dark:text-white/85">
+              Career milestones
+            </div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
+              13k+
+            </div>
+            <div className="text-sm text-neutral-700 dark:text-white/85">
+              People impacted
+            </div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
+              2
+            </div>
+            <div className="text-sm text-neutral-700 dark:text-white/85">
+              Countries worked in
+            </div>
+          </Card>
         </div>
       </Section>
     </main>

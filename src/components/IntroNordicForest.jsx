@@ -1,10 +1,4 @@
 // src/components/IntroNordicForest.jsx
-// Nordic forest intro — dramatic version with sound-on-by-default:
-// - Veil / comets / fog / fireflies / snow / parallax pines
-// - Ambient loop + one-shot whoosh (tries autoplay; falls back to first gesture)
-// - One-time via localStorage (ttlHours) + force + storageKey
-// - Keeps ambient music playing after intro finishes
-
 import React, {
   useEffect,
   useMemo,
@@ -13,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import PropTypes from "prop-types";
+import { useSound } from "../sound/SoundProvider.jsx";
 
 /* ======================= utils ======================= */
 function usePrefersReducedMotion() {
@@ -28,7 +23,6 @@ function usePrefersReducedMotion() {
 }
 
 function uid() {
-  // stable-ish unique id
   return (
     (globalThis.crypto && crypto.randomUUID?.()) ||
     Math.random().toString(36).slice(2)
@@ -40,7 +34,7 @@ function makeFireflies(n) {
     id: uid(),
     x: Math.random(),
     y: Math.random() * 0.7 + 0.15,
-    d: 4 + Math.random() * 6, // seconds
+    d: 4 + Math.random() * 6,
     r: 1 + Math.random() * 1.8,
   }));
 }
@@ -50,10 +44,59 @@ function makeSnow(n) {
     id: uid(),
     x: Math.random(),
     y: Math.random(),
-    s: 0.5 + Math.random() * 1.2, // size
-    d: 6 + Math.random() * 8, // fall duration seconds
+    s: 0.5 + Math.random() * 1.2,
+    d: 6 + Math.random() * 8,
     drift: (Math.random() - 0.5) * 0.4,
   }));
+}
+
+/* ===== small hooks to keep complexity low (no visual change) ===== */
+function useAutoFinish(show, reduced, durationMs, finish) {
+  useEffect(() => {
+    if (!show) {
+      return;
+    }
+    const id = setTimeout(finish, reduced ? 2500 : durationMs);
+    return () => clearTimeout(id);
+  }, [show, reduced, durationMs, finish]);
+}
+
+function useGestureOnce(enabled, onGesture) {
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    const handler = () => onGesture();
+    const evs = ["pointerdown", "keydown", "click", "touchstart"];
+    evs.forEach((ev) => window.addEventListener(ev, handler, { once: true }));
+    return () => evs.forEach((ev) => window.removeEventListener(ev, handler));
+  }, [enabled, onGesture]);
+}
+
+function useWhooshAudio(allowSound, whooshSrc) {
+  const whooshRef = useRef(null);
+  useEffect(() => {
+    if (!allowSound) {
+      return;
+    }
+
+    const whoosh = new Audio(whooshSrc);
+    whoosh.loop = false;
+    whoosh.volume = 0;
+    whooshRef.current = whoosh;
+
+    return () => {
+      try {
+        whooshRef.current?.pause();
+      } catch (e) {
+        if (import.meta.env?.DEV) {
+          console.debug("[Intro] whoosh pause failed:", e);
+        }
+      }
+      whooshRef.current = null;
+    };
+  }, [allowSound, whooshSrc]);
+  return whooshRef;
 }
 
 /* =================== CinematicName =================== */
@@ -138,10 +181,7 @@ CinematicName.propTypes = {
   light: PropTypes.bool,
   reduced: PropTypes.bool,
 };
-CinematicName.defaultProps = {
-  light: false,
-  reduced: false,
-};
+CinematicName.defaultProps = { light: false, reduced: false };
 
 /* ================== Main component =================== */
 export default function IntroNordicForest({
@@ -153,191 +193,139 @@ export default function IntroNordicForest({
   force,
   storageKey,
   durationMs,
-  ambientSrc,
   whooshSrc,
-  startVolume,
-  ambientVolume,
   whooshVolume,
 }) {
   const reduced = usePrefersReducedMotion();
+  const sound = useSound?.() || null;
 
-  // Visibility state — respects force + storage
+  // show / hide intro, respects TTL unless forced
   const [show, setShow] = useState(() => {
-    if (force) return true;
+    if (force) {
+      return true;
+    }
     try {
       const raw = localStorage.getItem(storageKey);
-      if (!raw) return true;
+      if (!raw) {
+        return true;
+      }
       const { t, ttl } = JSON.parse(raw);
       return Date.now() - t > ttl;
-    } catch {
+    } catch (e) {
+      if (import.meta.env?.DEV) {
+        console.debug("[Intro] TTL read failed:", e);
+      }
       return true;
     }
   });
 
-  // Dismiss & persist
+  // Track if user has performed a gesture for autoplay
+  const [userGestureReceived, setUserGestureReceived] = useState(false);
+
+  // Whoosh audio (separate from ambient)
+  const whooshRef = useWhooshAudio(allowSound, whooshSrc);
+
+  // Fade helper for whoosh only
+  const fadeWhoosh = useCallback(
+    (target, ms = 600) => {
+      const audio = whooshRef.current;
+      if (!audio) {
+        return;
+      }
+
+      const safeTarget = Math.min(1, Math.max(0, Number(target) || 0));
+      const start = Math.min(1, Math.max(0, Number(audio.volume) || 0));
+      const startTime = performance.now();
+
+      const step = (now) => {
+        const t = Math.min(1, (now - startTime) / ms);
+        const next = start + (safeTarget - start) * t;
+        audio.volume = Math.min(1, Math.max(0, next));
+        if (t < 1) {
+          requestAnimationFrame(step);
+        }
+      };
+      requestAnimationFrame(step);
+    },
+    [whooshRef]
+  );
+
+  // Dismiss and persist
   const finish = useCallback(() => {
     try {
       localStorage.setItem(
         storageKey,
         JSON.stringify({ t: Date.now(), ttl: ttlHours * 3600 * 1000 })
       );
-    } catch {
-      // ignore storage errors
+    } catch (e) {
+      if (import.meta.env?.DEV) {
+        console.debug("[Intro] persist failed:", e);
+      }
     }
     setShow(false);
-    if (onFinish) onFinish();
+    if (onFinish) {
+      onFinish();
+    }
   }, [onFinish, storageKey, ttlHours]);
 
-  // Auto-finish timer (default 6000ms; you asked for ~6s)
+  // Auto-finish timer
+  useAutoFinish(show, reduced, durationMs, finish);
+
+  // Handle whoosh sound effect when sound is enabled
   useEffect(() => {
-    if (!show) return;
-    const id = setTimeout(finish, reduced ? 2500 : durationMs);
-    return () => clearTimeout(id);
-  }, [show, reduced, durationMs, finish]);
+    if (!allowSound || !sound?.isEnabled || !userGestureReceived) {
+      return;
+    }
 
-  // --- Audio: start ON by default, try autoplay, keep looping after intro ---
-  const ambientRef = useRef(null);
-  const whooshRef = useRef(null);
-  const [muted, setMuted] = useState(false); // default sound ON
-  const [unlocked, setUnlocked] = useState(false); // becomes true on first gesture
-
-  // Try to create & start audio immediately
-  useEffect(() => {
-    if (!allowSound) return;
-
-    const amb = new Audio(ambientSrc);
-    amb.loop = true;
-    amb.volume = startVolume;
-
-    const swoosh = new Audio(whooshSrc);
-    swoosh.loop = false;
-    swoosh.volume = 0;
-
-    ambientRef.current = amb;
-    whooshRef.current = swoosh;
-
-    // Attempt autoplay
-    amb
-      .play()
-      .then(() => {
-        // fade up if not muted
-        if (!muted) fadeTo(amb, ambientVolume, 1200);
-        // schedule whoosh for dramatic accent
-        if (!muted) {
-          const id = setTimeout(() => {
-            if (!whooshRef.current) return;
-            whooshRef.current.currentTime = 0;
-            whooshRef.current.volume = 0;
-            whooshRef.current
-              .play()
-              .then(() => fadeTo(whooshRef.current, whooshVolume, 150))
-              .catch(() => {});
-          }, 900);
-          return () => clearTimeout(id);
-        }
-        return undefined;
-      })
-      .catch(() => {
-        // Autoplay blocked — wait for a gesture to unlock
-        const unlock = () => {
-          setUnlocked(true);
-          amb.currentTime = 0;
-          amb
-            .play()
-            .then(() => {
-              if (!muted) fadeTo(amb, ambientVolume, 1200);
-              // whoosh after unlock
-              setTimeout(() => {
-                if (!whooshRef.current || muted) return;
-                whooshRef.current.currentTime = 0;
-                whooshRef.current.volume = 0;
-                whooshRef.current
-                  .play()
-                  .then(() => fadeTo(whooshRef.current, whooshVolume, 150))
-                  .catch(() => {});
-              }, 900);
-            })
-            .catch(() => {});
-        };
-        window.addEventListener("pointerdown", unlock, { once: true });
-        window.addEventListener("keydown", unlock, { once: true });
-        return () => {
-          window.removeEventListener("pointerdown", unlock);
-          window.removeEventListener("keydown", unlock);
-        };
-      });
-
-    return () => {
-      try {
-        ambientRef.current?.pause();
-        whooshRef.current?.pause();
-      } catch {
-        // ignore
+    const playWhoosh = () => {
+      const whoosh = whooshRef.current;
+      if (!whoosh) {
+        return;
       }
-      ambientRef.current = null;
-      whooshRef.current = null;
+
+      whoosh.currentTime = 0;
+      whoosh.volume = 0;
+      whoosh
+        .play()
+        .then(() => fadeWhoosh(whooshVolume, 150))
+        .catch((e) => {
+          if (import.meta.env?.DEV) {
+            console.debug("[Intro] whoosh play failed:", e);
+          }
+        });
     };
+
+    const timer = setTimeout(playWhoosh, 900);
+    return () => clearTimeout(timer);
   }, [
     allowSound,
-    ambientSrc,
-    whooshSrc,
-    ambientVolume,
+    sound?.isEnabled,
+    userGestureReceived,
     whooshVolume,
-    muted,
-    startVolume,
+    fadeWhoosh,
+    whooshRef,
   ]);
 
-  // Keep ambient after intro ends
-  useEffect(() => {
-    if (!show && ambientRef.current) {
-      if (!muted) {
-        ambientRef.current.loop = true;
-        ambientRef.current.play().catch(() => {});
-      } else {
-        fadeTo(ambientRef.current, 0, 400);
-      }
-    }
-  }, [show, muted]);
+  // Set up user gesture detection for autoplay unlock
+  useGestureOnce(!userGestureReceived, () => setUserGestureReceived(true));
 
-  // Mute toggle handler (fades in/out)
+  // Toggle mute - sync with global sound provider
   const toggleMute = useCallback(() => {
-    const amb = ambientRef.current;
-    const swoosh = whooshRef.current;
-    setMuted((m) => {
-      const next = !m;
-      if (amb) {
-        if (next) {
-          // going muted
-          fadeTo(amb, 0, 400);
-          try {
-            swoosh?.pause();
-          } catch {
-            // ignore
-          }
-        } else {
-          // unmuting
-          amb.play().catch(() => {});
-          fadeTo(amb, ambientVolume, 800);
-        }
-      }
-      return next;
-    });
-  }, [ambientVolume]);
+    if (!sound) {
+      return;
+    }
 
-  // simple volume fade helper
-  const fadeTo = (audio, target, ms = 600) => {
-    if (!audio) return;
-    const start = audio.volume;
-    const startTime = performance.now();
-    const step = (now) => {
-      const t = Math.min(1, (now - startTime) / ms);
-      audio.volume = start + (target - start) * t;
-      if (t < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  };
+    setUserGestureReceived(true);
 
-  // Parallax + particles
+    if (sound.isEnabled) {
+      sound.disable();
+    } else {
+      sound.setConsented(true);
+      sound.enable();
+    }
+  }, [sound]);
+
+  // Parallax layers & particles (declared unconditionally, used below)
   const layers = useMemo(
     () => [
       { z: 0, swaySec: 4.6, opacity: 1.0 },
@@ -349,7 +337,9 @@ export default function IntroNordicForest({
   const fireflies = useMemo(() => makeFireflies(38), []);
   const snow = useMemo(() => makeSnow(40), []);
 
-  if (!show) return null;
+  if (!show) {
+    return null;
+  }
   const isLight = theme === "light";
 
   return (
@@ -432,6 +422,11 @@ export default function IntroNordicForest({
           padding:8px 12px; border-radius:999px; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
           border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.14); color:white; cursor:pointer;
           backdrop-filter: blur(8px);
+          transition: all 0.2s ease;
+        }
+        .btn:hover {
+          background:rgba(255,255,255,.24);
+          border-color: rgba(255,255,255,.35);
         }
 
         .comet {
@@ -444,10 +439,7 @@ export default function IntroNordicForest({
           mix-blend-mode: ${isLight ? "screen" : "lighter"};
           opacity: .0;
         }
-        .comet.two {
-          top: 22vh;
-          animation-delay: ${reduced ? 0.6 : 2.2}s;
-        }
+        .comet.two { top: 22vh; animation-delay: ${reduced ? 0.6 : 2.2}s; }
       `}</style>
 
       <div className="intro-wrap">
@@ -491,15 +483,15 @@ export default function IntroNordicForest({
           <button type="button" className="btn" onClick={finish}>
             Skip
           </button>
-          {allowSound && (
+          {allowSound && sound && (
             <button
               type="button"
               className="btn"
               onClick={toggleMute}
-              aria-pressed={!muted}
-              title={muted ? "Unmute" : "Mute"}
+              aria-pressed={sound.isEnabled}
+              title={sound.isEnabled ? "Mute" : "Unmute"}
             >
-              {muted ? "Unmute" : "Mute"}
+              {sound.isEnabled ? "Mute" : "Unmute"}
             </button>
           )}
         </div>
@@ -519,15 +511,12 @@ IntroNordicForest.propTypes = {
   force: PropTypes.bool,
   storageKey: PropTypes.string,
   durationMs: PropTypes.number,
-  ambientSrc: PropTypes.string,
   whooshSrc: PropTypes.string,
-  startVolume: PropTypes.number,
-  ambientVolume: PropTypes.number,
   whooshVolume: PropTypes.number,
 };
 
 IntroNordicForest.defaultProps = {
-  name: "Sean Kipinä",
+  name: "Sean Kipiná",
   theme: "dark",
   ttlHours: 24,
   onFinish: undefined,
@@ -535,15 +524,11 @@ IntroNordicForest.defaultProps = {
   force: false,
   storageKey: "intro:nordic:v5",
   durationMs: 6000,
-  ambientSrc: "/audio/forest-ambience.mp3",
   whooshSrc: "/audio/aurora-whoosh.mp3",
-  startVolume: 0.0,
-  ambientVolume: 0.35,
   whooshVolume: 0.8,
 };
 
 /* ======================= pieces ======================= */
-
 function Fireflies({ points }) {
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -622,7 +607,9 @@ Snowfall.propTypes = {
 function PineLayer({ depth, swaySec, opacity }) {
   const ref = useRef(null);
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) {
+      return;
+    }
     let raf = 0;
     const base = performance.now();
     const loop = () => {
@@ -636,9 +623,8 @@ function PineLayer({ depth, swaySec, opacity }) {
   }, [depth, swaySec]);
 
   const fill = `rgba(10,20,30,${0.92 - depth * 0.22})`;
-
   const pines = useMemo(
-    () => Array.from({ length: 28 }, () => ({ id: uid() })), // stable keys per mount
+    () => Array.from({ length: 28 }, () => ({ id: uid() })),
     []
   );
 
