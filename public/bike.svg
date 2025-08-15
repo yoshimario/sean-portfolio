@@ -1,0 +1,55 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF9A8B"/>
+      <stop offset="100%" stop-color="#5D26C1"/>
+    </linearGradient>
+    <linearGradient id="mountGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4ECDC4"/>
+      <stop offset="100%" stop-color="#556270"/>
+    </linearGradient>
+    <linearGradient id="bikeFrameGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFA500"/>
+      <stop offset="100%" stop-color="#FF4500"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky background -->
+  <rect x="0" y="0" width="64" height="64" fill="url(#skyGrad)"/>
+  <!-- Mountains -->
+  <polygon points="0,48 16,24 32,48" fill="url(#mountGrad)"/>
+  <polygon points="20,48 36,20 52,48" fill="#2E8B57"/>
+  <polygon points="40,48 56,28 64,48" fill="url(#mountGrad)" opacity="0.8"/>
+  <!-- Ground -->
+  <rect x="0" y="48" width="64" height="16" fill="#3B5323"/>
+  <!-- Bike group -->
+  <g transform="translate(8,16) scale(0.8)">
+    <!-- Wheels -->
+    <circle cx="32" cy="40" r="12" fill="#FFF" stroke="#333" stroke-width="2"/>
+    <circle cx="8" cy="40" r="12" fill="#FFF" stroke="#333" stroke-width="2"/>
+    <!-- Spokes rear -->
+    <g stroke="#333" stroke-width="1">
+      <line x1="8" y1="40" x2="20" y2="40"/>
+      <line x1="8" y1="40" x2="8" y2="28"/>
+      <line x1="8" y1="40" x2="-4" y2="40"/>
+      <line x1="8" y1="40" x2="8" y2="52"/>
+    </g>
+    <!-- Spokes front -->
+    <g stroke="#333" stroke-width="1">
+      <line x1="32" y1="40" x2="44" y2="40"/>
+      <line x1="32" y1="40" x2="32" y2="28"/>
+      <line x1="32" y1="40" x2="20" y2="40"/>
+      <line x1="32" y1="40" x2="32" y2="52"/>
+    </g>
+    <!-- Frame -->
+    <path d="M8,40 L20,24 L32,40 L20,40 L14,32" fill="none" stroke="url(#bikeFrameGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20,24 L24,16 L36,16" fill="none" stroke="url(#bikeFrameGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Seat -->
+    <path d="M22,16 L20,12 L28,12" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <!-- Handlebars -->
+    <path d="M36,16 L44,12" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <line x1="44" y1="12" x2="46" y2="16" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <!-- Pedal -->
+    <line x1="16" y1="40" x2="12" y2="44" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="16" cy="40" r="2" fill="#333"/>
+  </g>
+</svg>
