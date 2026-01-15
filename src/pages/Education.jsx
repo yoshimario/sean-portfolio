@@ -14,14 +14,12 @@ const cx = (...c) => c.filter(Boolean).join(" ");
 const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 const section = "py-16 md:py-20";
 
-/* -------------------- UI primitives (match Experience.jsx) -------------------- */
+/* -------------------- UI primitives -------------------- */
 const Card = ({ className = "", children }) => (
   <div
     className={cx(
       "rounded-2xl border shadow-lg backdrop-blur-xl transition-colors",
-      // Light
       "border-neutral-200/70 bg-white/85 text-neutral-900",
-      // Dark (more opaque for legibility over aurora)
       "dark:border-white/15 dark:bg-[rgba(10,15,30,0.78)] dark:text-white",
       className
     )}
@@ -41,8 +39,7 @@ const CardContent = ({ children, className = "" }) => (
 const CardTitle = ({ children, className = "" }) => (
   <h3
     className={cx(
-      "font-semibold tracking-tight text-neutral-900 dark:text-white",
-      "text-lg md:text-xl leading-tight",
+      "font-semibold tracking-tight text-neutral-900 dark:text-white text-lg md:text-xl leading-tight",
       className
     )}
   >
@@ -53,8 +50,7 @@ const CardTitle = ({ children, className = "" }) => (
 const CardDescription = ({ children, className = "" }) => (
   <p
     className={cx(
-      "text-sm md:text-[0.95rem] leading-relaxed",
-      "text-neutral-700 dark:text-white/85",
+      "text-sm md:text-[0.95rem] leading-relaxed text-neutral-700 dark:text-white/85",
       className
     )}
   >
@@ -104,33 +100,27 @@ function Section({ title, subtitle, children }) {
   );
 }
 
-/* -------------------- data (unchanged content) -------------------- */
+/* -------------------- Data Source -------------------- */
 const EDUCATION = [
   {
     school: "Metropolia University of Applied Sciences",
     degree: "Bachelor of Engineering",
     specialization: "Information Technology (On-line studies)",
-    time: "Jan 2026 – present", // Update as per your actual start date
+    time: "Jan 2026 – present",
     location: "Vantaa, Finland (Online)",
     status: "In Progress",
     progress: 60,
     gpa: null,
     description:
-      "A flexible, fully online 240 ECTS program focusing on broad digital competencies and professional ICT engineering skills. The curriculum is designed for self-guided study irrespective of time and place.",
+      "A flexible, fully online 240 ECTS program focusing on broad digital competencies and professional ICT engineering skills.",
     highlights: [
       "Advanced professional studies in ICT and software development",
-      "Multidisciplinary innovation projects and field-related work experience",
-      "Self-paced learning requiring strong time management and self-guidance",
-      "Hands-on technical modules including Cloud Computing and Information Security",
+      "Multidisciplinary innovation projects",
+      "Hands-on technical modules including Cloud Computing",
     ],
-    skills: [
-      "Network Engineering",
-      "Cloud Computing",
-      "Information Security",
-      "Web Development",
-      "Software Engineering",
-    ],
+    skills: ["Network Engineering", "Cloud Computing", "Information Security"],
     logoPlaceholder: "🏛️",
+    country: "Finland",
   },
   {
     school: "Laurea University of Applied Sciences",
@@ -142,45 +132,35 @@ const EDUCATION = [
     progress: 80,
     gpa: null,
     description:
-      "Comprehensive program combining business acumen with technical cybersecurity skills, preparing for leadership roles in IT security.",
+      "Comprehensive program combining business acumen with technical cybersecurity skills.",
     highlights: [
       "Network security and vulnerability assessment",
       "Risk management and compliance frameworks",
-      "Business continuity and incident response",
       "Cloud security architectures",
     ],
-    skills: [
-      "Network Security",
-      "Risk Assessment",
-      "Compliance",
-      "Business Analysis",
-    ],
+    skills: ["Network Security", "Risk Assessment", "Compliance"],
     logoPlaceholder: "🏛️",
+    country: "Finland",
   },
   {
     school: "Tacoma Community College",
     degree: "AS Cybersecurity and Networking",
-    specialization: null,
     time: "2018 – 2020",
     location: "Tacoma, USA",
     status: "Completed",
+    progress: 100,
     gpa: "4.0 GPA",
     honors: "PTK Honors",
     description:
-      "Intensive technical program focused on network administration, cybersecurity fundamentals, and hands-on lab experience.",
+      "Intensive technical program focused on network administration and cybersecurity fundamentals.",
     highlights: [
       "Network configuration and troubleshooting",
-      "Security protocols and encryption",
       "System administration (Windows/Linux)",
       "Ethical hacking and penetration testing",
     ],
-    skills: [
-      "Network Administration",
-      "System Security",
-      "Penetration Testing",
-      "Linux/Windows",
-    ],
+    skills: ["Network Administration", "System Security", "Linux/Windows"],
     logoPlaceholder: "🎓",
+    country: "USA",
   },
   {
     school: "DePaul University",
@@ -189,42 +169,45 @@ const EDUCATION = [
     time: "2010 – 2017",
     location: "Chicago, USA",
     status: "Completed",
+    progress: 100,
     gpa: null,
     description:
-      "Creative and technical program combining storytelling, visual production, and interactive media development.",
+      "Creative and technical program combining storytelling and interactive media development.",
     highlights: [
-      "Digital media production and post-production",
+      "Digital media production",
       "Interactive storytelling and game design",
-      "Project management for creative teams",
-      "Technical problem-solving in production environments",
+      "Technical problem-solving in production",
     ],
     skills: [
       "Creative Problem Solving",
       "Project Management",
       "Technical Production",
-      "Team Collaboration",
     ],
     logoPlaceholder: "🎬",
+    country: "USA",
   },
 ];
 
-/* -------------------- card -------------------- */
+/* -------------------- card (Fully Dynamic) -------------------- */
 function EducationCard({ education }) {
+  // Check status dynamically from data
   const isCurrentlyEnrolled = education.status === "In Progress";
 
-  // 1. Pull the dynamic progress value (60 or 80) from your data
+  // Pull the numeric progress (e.g., 60 or 80) directly from your data
   const progressValue = education.progress || 0;
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300">
       <CardHeader>
         <div className="flex items-start gap-4 mb-3">
+          {/* Logo placeholder */}
           <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 flex items-center justify-center text-2xl flex-shrink-0">
             {education.logoPlaceholder}
           </div>
 
           <div className="flex-1 min-w-0">
             <CardTitle className="mb-1">{education.school}</CardTitle>
+
             <div className="text-indigo-600 dark:text-indigo-300 font-medium mb-2">
               {education.degree}
               {education.specialization && (
@@ -259,18 +242,23 @@ function EducationCard({ education }) {
             </div>
           </div>
         </div>
+
         <CardDescription>{education.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
+        {/* Key Learning Areas - Dynamic mapping */}
         <div className="mb-6">
           <h4 className="font-medium mb-3 text-sm text-neutral-800 dark:text-white/90 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Key Learning Areas
           </h4>
           <ul className="space-y-2.5">
-            {education.highlights.map((h) => (
-              <li key={h} className="flex items-start gap-2 text-[0.95rem]">
+            {education.highlights.map((h, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-2 text-[0.95rem] leading-relaxed"
+              >
                 <TrendingUp className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
                 <span className="text-neutral-800 dark:text-white/90">{h}</span>
               </li>
@@ -278,33 +266,35 @@ function EducationCard({ education }) {
           </ul>
         </div>
 
-        <div>
+        {/* Skills - Dynamic mapping */}
+        <div className="mb-6">
           <h4 className="font-medium mb-2 text-sm text-neutral-800 dark:text-white/90">
             Skills Developed
           </h4>
           <div className="flex flex-wrap gap-2">
-            {education.skills.map((skill) => (
-              <Badge key={`${education.school}-s-${skill}`}>{skill}</Badge>
+            {education.skills.map((skill, i) => (
+              <Badge key={i}>{skill}</Badge>
             ))}
           </div>
         </div>
 
-        {/* --- DYNAMIC PROGRESS BAR SECTION --- */}
+        {/* --- DYNAMIC PROGRESS BAR FIX --- */}
         {isCurrentlyEnrolled && (
-          <div className="mt-6 pt-4 border-t border-white/10">
+          <div className="mt-6 pt-4 border-t border-black/5 dark:border-white/10">
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-neutral-700 dark:text-white/85">
                 Progress
               </span>
               <span className="text-indigo-700 dark:text-indigo-300 font-medium">
+                {/* Dynamically displays the number from your array */}
                 {progressValue}%
               </span>
             </div>
-            {/* Background of the bar */}
+            {/* Added h-2 and overflow-hidden to prevent the bar from disappearing */}
             <div className="w-full bg-neutral-200 dark:bg-neutral-700/70 rounded-full h-2 overflow-hidden">
-              {/* The actual progress fill */}
               <div
                 className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000 ease-out"
+                /* Dynamically sets the width based on the progress number */
                 style={{ width: `${progressValue}%` }}
               />
             </div>
@@ -314,8 +304,11 @@ function EducationCard({ education }) {
     </Card>
   );
 }
-/* -------------------- page -------------------- */
+
+/* -------------------- Main Page (Dynamic Logic) -------------------- */
 export default function Education() {
+  // Logic to derive summary stats from the EDUCATION data array
+  const totalDegrees = EDUCATION.length;
   const completedDegrees = EDUCATION.filter(
     (ed) => ed.status === "Completed"
   ).length;
@@ -323,17 +316,19 @@ export default function Education() {
     (ed) => ed.status === "In Progress"
   ).length;
 
+  // Dynamically calculate unique countries from data
+  const uniqueCountries = [...new Set(EDUCATION.map((ed) => ed.country))]
+    .length;
+
   return (
     <main className={container}>
       <Section
         title="Education"
         subtitle="Academic foundation building technical expertise and analytical thinking."
       >
-        {/* Timeline (matches Experience.jsx alignment) */}
         <div className="space-y-8 mb-16">
           {EDUCATION.map((ed, idx) => (
-            <div key={ed.school} className="relative">
-              {/* vertical line aligned to header baseline */}
+            <div key={idx} className="relative">
               {idx < EDUCATION.length - 1 && (
                 <div
                   className="absolute left-6 top-16 w-px h-[calc(100%-2rem)] opacity-40"
@@ -344,11 +339,7 @@ export default function Education() {
                   aria-hidden="true"
                 />
               )}
-
-              {/* dot */}
               <div className="absolute left-4 top-8 w-4 h-4 rounded-full bg-indigo-500 ring-4 ring-white dark:ring-[#0b1022] shadow-lg" />
-
-              {/* card */}
               <div className="ml-12">
                 <EducationCard education={ed} />
               </div>
@@ -356,11 +347,11 @@ export default function Education() {
           ))}
         </div>
 
-        {/* Summary cards (match Experience.jsx styling) */}
+        {/* Dynamic Summary Cards */}
         <div className="grid sm:grid-cols-4 gap-4 md:gap-6">
           <Card className="p-6 text-center">
             <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
-              {completedDegrees + currentlyEnrolled}
+              {totalDegrees}
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
               Degrees pursued
@@ -384,7 +375,7 @@ export default function Education() {
           </Card>
           <Card className="p-6 text-center">
             <div className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mb-1">
-              2
+              {uniqueCountries}
             </div>
             <div className="text-sm text-neutral-700 dark:text-white/85">
               Countries studied
