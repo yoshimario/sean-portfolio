@@ -112,7 +112,7 @@ function Section({ title, subtitle, children }) {
 const WRITING = [
   {
     title: "Placement 1 — Hublet Oy (Learning Assignment)",
-    href: "/docs/Sean_Kipina_Placement1_Report.pdf", // served from /public/docs
+    href: "/docs/Kipinä_Sean_Placement1_Report.pdf", // served from /public/docs
     date: "2025-01-15",
     category: "Work & Reports",
     readTime: "10–15 min (report)",
