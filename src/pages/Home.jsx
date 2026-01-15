@@ -304,14 +304,6 @@ export default function Home() {
                 Event attendees managed
               </div>
             </Card>
-            <Card className="p-5 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 text-enhanced">
-                4.75
-              </div>
-              <div className="text-sm text-neutral-700 dark:text-white/80 text-enhanced">
-                GPA in current Business IT & Cyber Security program
-              </div>
-            </Card>
           </div>
         </Section>
 
