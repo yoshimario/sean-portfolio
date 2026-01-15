@@ -2,8 +2,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Visual background
-import AuroraBackgroundVivid from "./components/AuroraBackgroundVivid";
+// Visual background - Switched to R3F for performance
+import AuroraBackgroundR3F from "./components/AuroraBackgroundR3F";
 // One-time intro overlay
 import IntroNordicForest from "./components/IntroNordicForest";
 
@@ -24,10 +24,6 @@ import "./index.css";
 import "./App.css";
 
 const cx = (...c) => c.filter(Boolean).join(" ");
-
-// ---- Toggle this ON the first time to make sure the intro shows ----
-const INTRO_FORCE = false; // set true to force the intro to appear
-const INTRO_KEY = "intro:nordic:v4"; // change key to re-show at least once
 
 // Simple on-screen error catcher so "white screen" shows the actual error
 function ErrorBoundary({ children }) {
@@ -80,62 +76,39 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        {/* ---------- One-time Nordic intro overlay (render FIRST) ---------- */}
+        {/* ---------- One-time Nordic intro overlay ---------- */}
         <IntroNordicForest
           name="Sean Kipinä"
           theme={dark ? "dark" : "light"}
           ttlHours={24}
-          force={true} // turn on to test every refresh; off for TTL behavior
+          force={false} // respect TTL behavior to prevent repetitive loading
           storageKey="intro:nordic:v5"
-          durationMs={6000} // 6 seconds on screen
-          allowSound={true} // show audio controls
+          durationMs={6000}
+          allowSound={true}
           ambientSrc="/audio/forest-ambience.mp3"
           whooshSrc="/audio/aurora-whoosh.mp3"
           startVolume={0.0}
           ambientVolume={0.35}
           whooshVolume={0.8}
-          defaultMuted={false} // <--- NEW PROP in component
-          autoPlayUnlocked={true} // <--- NEW PROP in component
+          defaultMuted={false}
+          autoPlayUnlocked={true}
         />
 
-        {/* ---------- Global animated background (behind all content) ---------- */}
-        <AuroraBackgroundVivid
+        {/* ---------- Global animated background ---------- 
+            Switched from AuroraBackgroundVivid to AuroraBackgroundR3F.
+            The R3F version uses WebGL/GPU rendering which significantly 
+            reduces CPU load and prevents browser crashes.
+        */}
+        <AuroraBackgroundR3F
           theme={dark ? "dark" : "light"}
-          showInLight
-          lightSky="none"
-          starsInLight={false}
-          /* DARK: softer & more readable */
-          intensity={0.2}
-          maxOpacity={0.22}
-          bloom={0.95}
-          saturation={1.15}
-          /* Make a big “safe” lane for text */
-          safeBandTop={0.22}
-          safeBandBottom={0.85}
-          safeBandReduce={0.78}
-          /* Stars a touch quieter */
-          stars
-          starDensity={0.32}
-          starSize={0.7}
-          /* LIGHT mode tuning */
-          lightIntensity={0.42}
-          lightMaxOpacity={0.34}
-          lightSaturation={1.25}
-          lightBloom={1.25}
-          /* 3 ribbons, curved, flowy */
-          ribbonCount={3}
-          speed={0.28}
-          curveAmp={0.24}
-          curveFreq={1.25}
-          weaveAmp={0.12}
-          noiseWarp={0.12}
-          /* more puff overlap → smoother ribbons */
-          puffRadius={140}
-          puffStepPx={52}
+          intensity={dark ? 0.8 : 1.3}
+          speed={0.5}
+          hueShift={0.25}
         />
+
         {dark && <div className="vignette-soft" />}
 
-        {/* ---------- App content (transparent so background shows) ---------- */}
+        {/* ---------- App content ---------- */}
         <div
           className={cx(
             "relative z-10 min-h-svh flex flex-col",

@@ -107,6 +107,31 @@ function Section({ title, subtitle, children }) {
 /* -------------------- data (unchanged content) -------------------- */
 const EDUCATION = [
   {
+    school: "Metropolia University of Applied Sciences",
+    degree: "Bachelor of Engineering",
+    specialization: "Information Technology (On-line studies)",
+    time: "Aug 2023 – present", // Update as per your actual start date
+    location: "Espoo, Finland (Online)",
+    status: "In Progress",
+    gpa: null,
+    description:
+      "A flexible, fully online 240 ECTS program focusing on broad digital competencies and professional ICT engineering skills. The curriculum is designed for self-guided study irrespective of time and place.",
+    highlights: [
+      "Advanced professional studies in ICT and software development",
+      "Multidisciplinary innovation projects and field-related work experience",
+      "Self-paced learning requiring strong time management and self-guidance",
+      "Hands-on technical modules including Cloud Computing and Information Security",
+    ],
+    skills: [
+      "Network Engineering",
+      "Cloud Computing",
+      "Information Security",
+      "Web Development",
+      "Software Engineering",
+    ],
+    logoPlaceholder: "🏛️",
+  },
+  {
     school: "Laurea University of Applied Sciences",
     degree: "BBA Business Information Technology",
     specialization: "Cyber Security",
