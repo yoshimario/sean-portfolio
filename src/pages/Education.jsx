@@ -110,9 +110,10 @@ const EDUCATION = [
     school: "Metropolia University of Applied Sciences",
     degree: "Bachelor of Engineering",
     specialization: "Information Technology (On-line studies)",
-    time: "Aug 2023 – present", // Update as per your actual start date
-    location: "Espoo, Finland (Online)",
+    time: "Jan 2026 – present", // Update as per your actual start date
+    location: "Vantaa, Finland (Online)",
     status: "In Progress",
+    progress: 60,
     gpa: null,
     description:
       "A flexible, fully online 240 ECTS program focusing on broad digital competencies and professional ICT engineering skills. The curriculum is designed for self-guided study irrespective of time and place.",
@@ -138,6 +139,7 @@ const EDUCATION = [
     time: "Aug 2023 – present",
     location: "Espoo, Finland",
     status: "In Progress",
+    progress: 80,
     gpa: null,
     description:
       "Comprehensive program combining business acumen with technical cybersecurity skills, preparing for leadership roles in IT security.",
@@ -210,18 +212,19 @@ const EDUCATION = [
 function EducationCard({ education }) {
   const isCurrentlyEnrolled = education.status === "In Progress";
 
+  // 1. Pull the dynamic progress value (60 or 80) from your data
+  const progressValue = education.progress || 0;
+
   return (
     <Card className="group hover:shadow-xl transition-all duration-300">
       <CardHeader>
         <div className="flex items-start gap-4 mb-3">
-          {/* Logo placeholder */}
           <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 flex items-center justify-center text-2xl flex-shrink-0">
             {education.logoPlaceholder}
           </div>
 
           <div className="flex-1 min-w-0">
             <CardTitle className="mb-1">{education.school}</CardTitle>
-
             <div className="text-indigo-600 dark:text-indigo-300 font-medium mb-2">
               {education.degree}
               {education.specialization && (
@@ -234,16 +237,15 @@ function EducationCard({ education }) {
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-white/80">
               <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <Calendar className="w-4 h-4" />
                 <span>{education.time}</span>
               </div>
               <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" aria-hidden="true" />
+                <MapPin className="w-4 h-4" />
                 <span>{education.location}</span>
               </div>
             </div>
 
-            {/* Status badges */}
             <div className="mt-2 flex items-center gap-2 flex-wrap">
               <Badge variant={isCurrentlyEnrolled ? "warning" : "success"}>
                 {education.status}
@@ -254,21 +256,13 @@ function EducationCard({ education }) {
                   {education.gpa}
                 </Badge>
               )}
-              {education.honors && (
-                <Badge variant="honor">
-                  <Award className="w-3 h-3 mr-1" />
-                  {education.honors}
-                </Badge>
-              )}
             </div>
           </div>
         </div>
-
         <CardDescription>{education.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
-        {/* Key Learning Areas */}
         <div className="mb-6">
           <h4 className="font-medium mb-3 text-sm text-neutral-800 dark:text-white/90 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
@@ -276,21 +270,14 @@ function EducationCard({ education }) {
           </h4>
           <ul className="space-y-2.5">
             {education.highlights.map((h) => (
-              <li
-                key={h}
-                className="flex items-start gap-2 text-[0.95rem] leading-relaxed"
-              >
-                <TrendingUp
-                  className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0"
-                  aria-hidden="true"
-                />
+              <li key={h} className="flex items-start gap-2 text-[0.95rem]">
+                <TrendingUp className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
                 <span className="text-neutral-800 dark:text-white/90">{h}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Skills */}
         <div>
           <h4 className="font-medium mb-2 text-sm text-neutral-800 dark:text-white/90">
             Skills Developed
@@ -302,7 +289,7 @@ function EducationCard({ education }) {
           </div>
         </div>
 
-        {/* Progress for current studies */}
+        {/* --- DYNAMIC PROGRESS BAR SECTION --- */}
         {isCurrentlyEnrolled && (
           <div className="mt-6 pt-4 border-t border-white/10">
             <div className="flex items-center justify-between text-sm mb-2">
@@ -310,13 +297,15 @@ function EducationCard({ education }) {
                 Progress
               </span>
               <span className="text-indigo-700 dark:text-indigo-300 font-medium">
-                ~60%
+                {progressValue}%
               </span>
             </div>
-            <div className="w-full bg-neutral-200 dark:bg-neutral-700/70 rounded-full h-2">
+            {/* Background of the bar */}
+            <div className="w-full bg-neutral-200 dark:bg-neutral-700/70 rounded-full h-2 overflow-hidden">
+              {/* The actual progress fill */}
               <div
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-700"
-                style={{ width: "60%" }}
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000 ease-out"
+                style={{ width: `${progressValue}%` }}
               />
             </div>
           </div>
@@ -325,7 +314,6 @@ function EducationCard({ education }) {
     </Card>
   );
 }
-
 /* -------------------- page -------------------- */
 export default function Education() {
   const completedDegrees = EDUCATION.filter(
